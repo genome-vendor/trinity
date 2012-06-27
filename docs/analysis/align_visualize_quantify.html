@@ -1,0 +1,453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.6" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock > div.content {
+  padding-left: 2.0em;
+}
+
+div.attribution {
+  text-align: right;
+}
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.verseblock div.content {
+  white-space: pre;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-content {
+  padding-left: 2.0em;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title>Trinity: Supported Processes for Read Alignment, Visualization, and Abundance Estimation</title>
+</head>
+<body>
+<div id="header">
+<h1>Trinity: Supported Processes for Read Alignment, Visualization, and Abundance Estimation</h1>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Processes described below are under rapid development, subject to change, and should be pursued with caution.</td>
+</tr></table>
+</div>
+<div class="para"><p>The following describes methods available, mostly through third-party tools, for generating alignments of RNA-Seq reads to the Trinity transcripts, visualizing the read mappings and coverage information, and estimating abundance values of transcripts (a prerequisite for <a href="diff_expression_analysis.html">studies of differential expression</a>).</p></div>
+</div>
+</div>
+<h2 id="_read_alignment">Read Alignment</h2>
+<div class="sectionbody">
+<div class="para"><p>Align reads to the Trinity transcripts using the <em>util/alignReads.pl</em> script, which can leverage Bowtie, BLAT, or BWA as the aligner. In the case of BLAT and Bowtie, you must install these tools separately.  A specially modified version of BWA is included in the latest Trinity distribution which reports multiply-mapped reads at each of their locations, rather than a single random placement.</p></div>
+<div class="para"><p>Caution should be taken in using this wrapper and the modified tools, because there are advantages and disadvantages to each, as described below:</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+Bowtie: Abundance estimation using RSEM (as described below) currently leverages Bowtie gap-free alignments.  Running bowtie (original, not the newer bowtie 2&#8230;still investigating) with paired fragment reads will exclude alignments where only one of the mate pairs aligns.  Since Trinity doesn't perform scaffolding across sequencing gaps yet, there will be cases (moreso in fragmented transcripts corresponding to lowly expressed transcripts) where only one of the mate-pairs aligns.  The alignReads.pl script operates similarly to TopHat in that it runs Bowtie to align each of the paired fragment reads separately, and then groups them into pairs afterwards.  We capture both the paired and the unpaired fragment read alignments from Bowtie for visualization and examining read support for the transcript assemblies.  The properly-mapped pairs are further extracted and can be used as a substrate for RSEM-based abundance estimation (see below).
+</p>
+</li>
+<li>
+<p>
+BLAT: we've found BLAT to be particularly useful in generating spliced short-read alignments to targets where short introns exist, but GSNAP is superior.  We include BLAT here only for exploratory purposes.
+</p>
+</li>
+<li>
+<p>
+BWA: the modified version of BWA provides SAM entries for each of the multiply mapped reads alternative mappings, but grouping of pairs is performed by the alignReads.pl script, and the total number of alignments reported tends to be substantially less than running the latest version of BWA in paired mode without having the multiply mapped individual reads.  BWA is recommended specifically for SNP-calling exercises, and we're continuing to explore the various options available, including further tweaks here.
+</p>
+</li>
+</ul></div>
+<div class="para"><p>Our <em>standard</em> practice for aligning reads to the Trinity transcripts for downstream analyses, including visualization and abundance estimation, is to run alignReads.pl with the &#8212;bowtie option, like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>TRINITY_RNASEQ_ROOT/util/alignReads.pl --left left.fq --right right.fq --seqType fq --target Trinity.fasta --aligner bowtie</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>(if your data are strand-specific, be sure to set --SS_lib_type as done with Trinity.pl)</tt></pre>
+</div></div>
+<div class="para"><p>Note, this alignment process generates lots of output files, ex. for paired strand-specific data:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>-rw-rw-r-- 1 bhaas broad 33644239 Oct 29 09:51 bowtie_out.coordSorted.sam
+-rw-rw-r-- 1 bhaas broad  5761928 Oct 29 09:51 bowtie_out.coordSorted.bam
+-rw-rw-r-- 1 bhaas broad 33644239 Oct 29 09:51 bowtie_out.nameSorted.sam
+-rw-rw-r-- 1 bhaas broad  4256476 Oct 29 09:51 bowtie_out.nameSorted.bam
+-rw-rw-r-- 1 bhaas broad     4416 Oct 29 09:51 bowtie_out.coordSorted.bam.bai
+-rw-rw-r-- 1 bhaas broad 33634652 Oct 29 09:51 bowtie_out.coordSorted.sam.+.sam
+-rw-rw-r-- 1 bhaas broad     9587 Oct 29 09:51 bowtie_out.coordSorted.sam.-.sam
+-rw-rw-r-- 1 bhaas broad 33634652 Oct 29 09:51 bowtie_out.nameSorted.sam.+.sam
+-rw-rw-r-- 1 bhaas broad     9587 Oct 29 09:51 bowtie_out.nameSorted.sam.-.sam
+-rw-rw-r-- 1 bhaas broad  5759999 Oct 29 09:51 bowtie_out.coordSorted.sam.+.bam
+-rw-rw-r-- 1 bhaas broad     4416 Oct 29 09:51 bowtie_out.coordSorted.sam.+.bam.bai
+-rw-rw-r-- 1 bhaas broad     1836 Oct 29 09:51 bowtie_out.coordSorted.sam.-.bam
+-rw-rw-r-- 1 bhaas broad     1680 Oct 29 09:51 bowtie_out.coordSorted.sam.-.bam.bai
+-rw-rw-r-- 1 bhaas broad  4255371 Oct 29 09:51 bowtie_out.nameSorted.sam.+.bam
+-rw-rw-r-- 1 bhaas broad     1843 Oct 29 09:51 bowtie_out.nameSorted.sam.-.bam
+-rw-rw-r-- 1 bhaas broad  3880361 Oct 29 09:51 bowtie_out.nameSorted.sam.+.sam.PropMapPairsForRSEM.bam</tt></pre>
+</div></div>
+<div class="para"><p>If you do not have strand-specific reads, then you'll not have the (+) and (-) versions of the files as above.</p></div>
+<div class="para"><p>The bowtie_out.coordSorted.bam  file contains both properly-mapped pairs and single unpaired fragment reads.  This file can be used for visualizing the alignments and coverage data using IGV (below).</p></div>
+<div class="para"><p>The *nameSorted*PropMapPairsForRsem.bam contains only the properly-mapped pairs for use with the RSEM software (see below).  If you have single-stranded RNA-Seq data, then use the bowtie_out.nameSorted.bam file directly (or strand-specific version).</p></div>
+</div>
+<h2 id="Visualization">Visualization</h2>
+<div class="sectionbody">
+<div class="para"><p>The Trinity Transcripts and read alignments can be visualized using the <a href="http://www.broadinstitute.org/igv/">Integrated Genomics Viewer</a>.</p></div>
+<div class="para"><p>Just import the Trinity.fasta file as a <em>genome</em>, and load up the bam file containing the aligned reads.  A screenshot below shows how the data are displayed:</p></div>
+<div class="para"><p><span class="image">
+<img src="../images/IGV_Trinity_screenshot.png" alt="Trinity_in_IGV" title="Trinity_in_IGV" />
+</span></p></div>
+</div>
+<h2 id="RSEM">Abundance Estimation Using RSEM</h2>
+<div class="sectionbody">
+<div class="para"><p>We've found RSEM to be enormously useful for abundance estimation in the context of transcriptome assemblies.</p></div>
+<div class="para"><p>Note, for the most accurate abundance estimation, we recommend that you obtain the latest RSEM software from <a href="http://deweylab.biostat.wisc.edu/rsem/">the Dewey lab</a> and have it do all the work, including running bowtie to generate alignments, and the downstream quantitation.</p></div>
+<div class="para"><p>However, we currently include a slightly modified version of RSEM with Trinity that will leverage the alignments generated by util/AlignReads.pl with Bowtie as described above.  Why do this? Mostly for pragmatic reasons: RSEM, by design, prefers to run bowtie with liberal alignment settings, whereas we are interested in visualizing and studying the higher quality alignments. Also, we prefer generating a single set of alignments that can be leveraged for both visualization and abundance estimation.  This whole process is likely to change in the near future so that a single set of alignments can be generated optimally for both purposes, leveraging the most current version of RSEM and applying a set of alignment filters to extract those that are most useful for visualization (Work in progress).</p></div>
+<div class="para"><p>To run the included version of RSEM, execute the following:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>TRINITY_RNASEQ_ROOT/util/RSEM_util/run_RSEM.pl --transcripts Trinity.fasta --name_sorted_bam bowtie_out.nameSorted.sam.+.sam.PropMapPairsForRSEM.bam --paired</tt></pre>
+</div></div>
+<div class="para"><p>which will create output files:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>RSEM.isoforms.results  : EM read counts per Trinity transcript
+RSEM.genes.results     : EM read counts on a per-Trinity-component (aka... gene) basis, 'gene' used loosely here.</tt></pre>
+</div></div>
+<div class="para"><p>You can compute FPKM values and examine transcripts in the context of the percent expressed within a given component (<em>gene</em>) by running:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>TRINITY_RNASEQ_ROOT/util/RSEM_util/summarize_RSEM_fpkm.pl --transcripts trinity_out_dir/Trinity.fasta --RSEM RSEM.isoforms.results --fragment_length 300 --group_by_component | tee Trinity.RSEM.fpkm</tt></pre>
+</div></div>
+<div class="para"><p>The output looks like follows:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>#Total fragments mapped to transcriptome: 24114.01
+transcript      length  eff_length      count   fraction        fpkm    %comp_fpkm
+comp20_c0_seq1  349     50      3.00    5.67e-03        2488.18 100.00</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>comp11_c0_seq1  5495    5196    977.15  2.47e-02        7798.71 76.86
+comp11_c0_seq2  5457    5158    0.00    5.22e-62        0.00    0.00
+comp11_c0_seq3  5436    5137    290.85  7.45e-03        2347.96 23.14
+comp11_c0_seq4  5398    5099    0.00    2.85e-63        0.00    0.00</tt></pre>
+</div></div>
+<div class="para"><p>If you want to filter out the likely transcript artifacts and lowly expressed transcripts, you might consider retaining only those that represent at least 1% of the per-component expression level.  Because Trinity transcripts are not currently scaffolded across sequencing gaps, there will be cases where smaller transcript fragments may lack enough properly-paired read support to show up as <em>expressed</em>, but are still otherwise supported by the read data.  Therefore, filter cautiously and we don't recommend discarding such lowly expressed (or seemingly unexpressed) transcripts, but rather putting them aside for further study.</p></div>
+</div>
+<h2 id="_sample_data">Sample Data</h2>
+<div class="sectionbody">
+<div class="para"><p>Under <em>TRINITY_RNASEQ_ROOT/sample_data/test_Trinity_Assembly</em>, execute <em>runMe.sh 1</em> to build Trinity transcript assemblies using the sample data, and then run through the downstream alignment and abundance estimation steps.</p></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2012-03-17 17:14:16 EDT
+</div>
+</div>
+</body>
+</html>

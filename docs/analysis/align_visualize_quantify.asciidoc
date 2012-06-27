@@ -1,0 +1,105 @@
+= Trinity: Supported Processes for Read Alignment, Visualization, and Abundance Estimation =
+
+[NOTE]
+Processes described below are under rapid development, subject to change, and should be pursued with caution.
+
+The following describes methods available, mostly through third-party tools, for generating alignments of RNA-Seq reads to the Trinity transcripts, visualizing the read mappings and coverage information, and estimating abundance values of transcripts (a prerequisite for link:diff_expression_analysis.html[studies of differential expression]).
+
+== Read Alignment ==
+
+Align reads to the Trinity transcripts using the 'util/alignReads.pl' script, which can leverage Bowtie, BLAT, or BWA as the aligner. In the case of BLAT and Bowtie, you must install these tools separately.  A specially modified version of BWA is included in the latest Trinity distribution which reports multiply-mapped reads at each of their locations, rather than a single random placement.
+
+Caution should be taken in using this wrapper and the modified tools, because there are advantages and disadvantages to each, as described below:
+
+- Bowtie: Abundance estimation using RSEM (as described below) currently leverages Bowtie gap-free alignments.  Running bowtie (original, not the newer bowtie 2...still investigating) with paired fragment reads will exclude alignments where only one of the mate pairs aligns.  Since Trinity doesn't perform scaffolding across sequencing gaps yet, there will be cases (moreso in fragmented transcripts corresponding to lowly expressed transcripts) where only one of the mate-pairs aligns.  The alignReads.pl script operates similarly to TopHat in that it runs Bowtie to align each of the paired fragment reads separately, and then groups them into pairs afterwards.  We capture both the paired and the unpaired fragment read alignments from Bowtie for visualization and examining read support for the transcript assemblies.  The properly-mapped pairs are further extracted and can be used as a substrate for RSEM-based abundance estimation (see below). 
+
+- BLAT: we've found BLAT to be particularly useful in generating spliced short-read alignments to targets where short introns exist, but GSNAP is superior.  We include BLAT here only for exploratory purposes.
+
+- BWA: the modified version of BWA provides SAM entries for each of the multiply mapped reads alternative mappings, but grouping of pairs is performed by the alignReads.pl script, and the total number of alignments reported tends to be substantially less than running the latest version of BWA in paired mode without having the multiply mapped individual reads.  BWA is recommended specifically for SNP-calling exercises, and we're continuing to explore the various options available, including further tweaks here.
+
+
+Our 'standard' practice for aligning reads to the Trinity transcripts for downstream analyses, including visualization and abundance estimation, is to run alignReads.pl with the --bowtie option, like so:
+
+    TRINITY_RNASEQ_ROOT/util/alignReads.pl --left left.fq --right right.fq --seqType fq --target Trinity.fasta --aligner bowtie
+
+    (if your data are strand-specific, be sure to set --SS_lib_type as done with Trinity.pl)
+
+Note, this alignment process generates lots of output files, ex. for paired strand-specific data:
+
+   -rw-rw-r-- 1 bhaas broad 33644239 Oct 29 09:51 bowtie_out.coordSorted.sam
+   -rw-rw-r-- 1 bhaas broad  5761928 Oct 29 09:51 bowtie_out.coordSorted.bam
+   -rw-rw-r-- 1 bhaas broad 33644239 Oct 29 09:51 bowtie_out.nameSorted.sam
+   -rw-rw-r-- 1 bhaas broad  4256476 Oct 29 09:51 bowtie_out.nameSorted.bam
+   -rw-rw-r-- 1 bhaas broad     4416 Oct 29 09:51 bowtie_out.coordSorted.bam.bai
+   -rw-rw-r-- 1 bhaas broad 33634652 Oct 29 09:51 bowtie_out.coordSorted.sam.+.sam
+   -rw-rw-r-- 1 bhaas broad     9587 Oct 29 09:51 bowtie_out.coordSorted.sam.-.sam
+   -rw-rw-r-- 1 bhaas broad 33634652 Oct 29 09:51 bowtie_out.nameSorted.sam.+.sam
+   -rw-rw-r-- 1 bhaas broad     9587 Oct 29 09:51 bowtie_out.nameSorted.sam.-.sam
+   -rw-rw-r-- 1 bhaas broad  5759999 Oct 29 09:51 bowtie_out.coordSorted.sam.+.bam
+   -rw-rw-r-- 1 bhaas broad     4416 Oct 29 09:51 bowtie_out.coordSorted.sam.+.bam.bai
+   -rw-rw-r-- 1 bhaas broad     1836 Oct 29 09:51 bowtie_out.coordSorted.sam.-.bam
+   -rw-rw-r-- 1 bhaas broad     1680 Oct 29 09:51 bowtie_out.coordSorted.sam.-.bam.bai
+   -rw-rw-r-- 1 bhaas broad  4255371 Oct 29 09:51 bowtie_out.nameSorted.sam.+.bam
+   -rw-rw-r-- 1 bhaas broad     1843 Oct 29 09:51 bowtie_out.nameSorted.sam.-.bam
+   -rw-rw-r-- 1 bhaas broad  3880361 Oct 29 09:51 bowtie_out.nameSorted.sam.+.sam.PropMapPairsForRSEM.bam
+
+
+If you do not have strand-specific reads, then you'll not have the (+) and (-) versions of the files as above.
+
+The bowtie_out.coordSorted.bam  file contains both properly-mapped pairs and single unpaired fragment reads.  This file can be used for visualizing the alignments and coverage data using IGV (below).
+
+The *nameSorted*PropMapPairsForRsem.bam contains only the properly-mapped pairs for use with the RSEM software (see below).  If you have single-stranded RNA-Seq data, then use the bowtie_out.nameSorted.bam file directly (or strand-specific version).
+
+
+[[Visualization]]
+== Visualization ==
+
+The Trinity Transcripts and read alignments can be visualized using the http://www.broadinstitute.org/igv/[Integrated Genomics Viewer].
+
+Just import the Trinity.fasta file as a 'genome', and load up the bam file containing the aligned reads.  A screenshot below shows how the data are displayed:
+
+image:../images/IGV_Trinity_screenshot.png[Trinity_in_IGV]
+
+[[RSEM]]
+== Abundance Estimation Using RSEM ==
+
+We've found RSEM to be enormously useful for abundance estimation in the context of transcriptome assemblies.
+
+Note, for the most accurate abundance estimation, we recommend that you obtain the latest RSEM software from http://deweylab.biostat.wisc.edu/rsem/[the Dewey lab] and have it do all the work, including running bowtie to generate alignments, and the downstream quantitation.
+
+However, we currently include a slightly modified version of RSEM with Trinity that will leverage the alignments generated by util/AlignReads.pl with Bowtie as described above.  Why do this? Mostly for pragmatic reasons: RSEM, by design, prefers to run bowtie with liberal alignment settings, whereas we are interested in visualizing and studying the higher quality alignments. Also, we prefer generating a single set of alignments that can be leveraged for both visualization and abundance estimation.  This whole process is likely to change in the near future so that a single set of alignments can be generated optimally for both purposes, leveraging the most current version of RSEM and applying a set of alignment filters to extract those that are most useful for visualization (Work in progress).
+
+To run the included version of RSEM, execute the following:
+
+   TRINITY_RNASEQ_ROOT/util/RSEM_util/run_RSEM.pl --transcripts Trinity.fasta --name_sorted_bam bowtie_out.nameSorted.sam.+.sam.PropMapPairsForRSEM.bam --paired 
+
+which will create output files:
+
+  RSEM.isoforms.results  : EM read counts per Trinity transcript
+  RSEM.genes.results     : EM read counts on a per-Trinity-component (aka... gene) basis, 'gene' used loosely here.
+
+You can compute FPKM values and examine transcripts in the context of the percent expressed within a given component ('gene') by running:
+
+   TRINITY_RNASEQ_ROOT/util/RSEM_util/summarize_RSEM_fpkm.pl --transcripts trinity_out_dir/Trinity.fasta --RSEM RSEM.isoforms.results --fragment_length 300 --group_by_component | tee Trinity.RSEM.fpkm
+
+The output looks like follows:
+
+  #Total fragments mapped to transcriptome: 24114.01
+  transcript      length  eff_length      count   fraction        fpkm    %comp_fpkm
+  comp20_c0_seq1  349     50      3.00    5.67e-03        2488.18 100.00
+  
+  comp11_c0_seq1  5495    5196    977.15  2.47e-02        7798.71 76.86
+  comp11_c0_seq2  5457    5158    0.00    5.22e-62        0.00    0.00
+  comp11_c0_seq3  5436    5137    290.85  7.45e-03        2347.96 23.14
+  comp11_c0_seq4  5398    5099    0.00    2.85e-63        0.00    0.00
+
+
+If you want to filter out the likely transcript artifacts and lowly expressed transcripts, you might consider retaining only those that represent at least 1% of the per-component expression level.  Because Trinity transcripts are not currently scaffolded across sequencing gaps, there will be cases where smaller transcript fragments may lack enough properly-paired read support to show up as 'expressed', but are still otherwise supported by the read data.  Therefore, filter cautiously and we don't recommend discarding such lowly expressed (or seemingly unexpressed) transcripts, but rather putting them aside for further study.
+
+
+
+== Sample Data ==
+
+Under 'TRINITY_RNASEQ_ROOT/sample_data/test_Trinity_Assembly', execute 'runMe.sh 1' to build Trinity transcript assemblies using the sample data, and then run through the downstream alignment and abundance estimation steps.
+
+

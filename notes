@@ -1,0 +1,7 @@
+
+svn co https://trinityrnaseq.svn.sourceforge.net/svnroot/trinityrnaseq/trunk trinityrnaseq
+
+
+autoreconf --install
+
+

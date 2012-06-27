@@ -1,0 +1,1 @@
+<your python 3.2 path> COFFAN.py -a Trinity.fa -b TrintiyTestXMLOutBLASTX -d RSEMOUT.txt -e best_candidates.pepPROTEINS -f TrinTEst.hmmeroutPFAM -j test_signalp -k test_thmmm -l COFFAN_OUT.txt -g kegg_sample -i kegg_pathways

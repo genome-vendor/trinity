@@ -1,0 +1,11 @@
+#######################################
+###  Note from Trinity developers:  ###
+#######################################
+
+The Meryl software was obtained from:  http://kmer.sourceforge.net
+
+and is covered separately from Trinity under the GNU Public License
+
+The software, although distributed with the Trinity package, is not considered part of Trinity, but instead a system used by Trinity, and is included here only for the sake of convenience.
+
+Meryl was developed by Brian Walenz <bwalenz@jcvi.org>

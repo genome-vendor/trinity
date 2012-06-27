@@ -1,0 +1,393 @@
+= RNA-Seq De novo Assembly Using Trinity =
+
+image:images/TrinityCompositeLogo.png["Trinity_logo", float="left"]
+
+Trinity, developed at the http://www.broadinstitute.org[Broad Institute] and the http://www.cs.huji.ac.il[Hebrew University of Jerusalem], represents a novel method for the efficient and robust de novo reconstruction of transcriptomes from RNA-seq data. Trinity combines three independent software modules: Inchworm, Chrysalis, and Butterfly, applied sequentially to process large volumes of RNA-seq reads. Trinity partitions the sequence data into many individual de Bruijn graphs, each representing the transcriptional complexity at at a given gene or locus, and then processes each graph independently to extract full-length splicing isoforms and to tease apart transcripts derived from paralogous genes.  Briefly, the process works like so:
+
+- *Inchworm* assembles the RNA-seq data into the unique sequences of transcripts, often generating full-length transcripts for a dominant isoform, but then reports just the unique portions of alternatively spliced transcripts.
+
+- *Chrysalis* clusters the Inchworm contigs into clusters and constructs complete de Bruijn graphs for each cluster.  Each cluster represents the full transcriptonal complexity for a given gene (or sets of genes that share sequences in common).  Chrysalis then partitions the full read set among these disjoint graphs.
+
+- *Butterfly* then processes the individual graphs in parallel, tracing the paths that reads and pairs of reads take within the graph, ultimately reporting full-length transcripts for alternatively spliced isoforms, and teasing apart transcripts that corresponds to paralogous genes.
+
+Trinity was published in http://www.nature.com/nbt/journal/vaop/ncurrent/abs/nbt.1883.html[Nature Biotechnology].  The Trinity software package can be downloaded https://sourceforge.net/projects/trinityrnaseq/files/[here].
+
+
+== Table of Contents ==
+
+- <<installation, Installing Trinity>>
+- <<running_trinity, Running Trinity>>
+- <<typical_usage, Typical Trinity Command Line>>
+- <<trinity_output, Output of Trinity>>
+- <<jaccard_clip, Minimizing Fusion Transcripts Derived from Gene Dense Genomes (eg. Schizosaccharomyces) >>
+- <<compute_requirements, Hardware and Configuration Requirements>>
+- <<monitoring_trinity, Monitoring the Progress of Trinity>>
+- <<sample_data, Running Trinity on Sample Data>>
+- <<Downstream_analyses, Support for Visualization & Abundance Estimation & Differential Expression Analysis & and Protein-coding Region Identification>>
+- <<Computing_Grid, Adapting Trinity to a computing grid for parallel processing>>
+- link:advanced_trinity_guide.html[Advanced Guide to Trinity]
+- link:trinity_faq.html[Frequently Asked Questions]
+- <<trinity_tidbits, Trinity Tidbits>>
+- <<trinity_developers, Trinity Developers Group>>
+- <<contact_us, Contact Us>>
+- <<referencing_trinity, Referencing Trinity>>
+
+
+[[installation]]
+== Installing Trinity ==
+
+=== Local Installation of Trinity on a High-memory Server ===
+
+After https://sourceforge.net/projects/trinityrnaseq/files/[downloading] the sofware, simply type 'make' in the base installation directory.  This should build Inchworm and Chrysalis, both written in C++.  Butterfly should not require any special compilation, as its written in Java and already provided as portable precompiled software.
+
+Trinity has been tested and is supported on Linux.
+
+=== Using an Existing Installation on Available High Performance Computing Systems ===
+
+- Trinity is available on XSEDE's Blacklight server at the http://www.psc.edu/[Pittsburgh Supercomputer Center].  Information on how researchers in the USA can get a FREE account and to run Trinity on Blacklight (which has up to 16TB of RAM!) is provided http://trinity-use-on-blacklight-psc.wikispaces.com/Trinity+Usage+on+Blacklight[here]. Thanks to Phil Blood and Brian Cougar for maintaining this installation and making services available.
+
+- http://diagcomputing.org/[The Data Intensive Acadmeic Grid (DIAG)] provides free access to high memory servers and data storage to academic researchers. Trinity is supported as one of the pre-installed applications.  Thanks to Anup Mahurkar and Joshua Orvis for support.
+
+=== Run Trinity on the Amazon Cloud ===
+
+- http://ged.msu.edu/angus/metag-assembly-2011/running-trinity.html[Trinity can be run on the Amazon Cloud].  Thanks to Titus Brown for providing these details.
+
+=== Run Trinity on a Galaxy Instance ===
+
+- A https://bitbucket.org/galaxy/galaxy-dist/src/tip/tools/ngs_rna/trinity_all.xml[Trinity plug-in] for http://main.g2.bx.psu.edu/[Galaxy] is available.  Thanks to Jeremy Goecks, David Matthews, and Shawn Starkenburg for development, testing, and validation.
+
+
+[[running_trinity]]
+== Running Trinity ==
+
+Trinity is run via the script: 'Trinity.pl' found in the base installation directory.
+
+Usage info is as follows:
+
+ ###############################################################################
+ #
+ #     ______  ____   ____  ____   ____  ______  __ __
+ #    |      ||    \ |    ||    \ |    ||      ||  |  |
+ #    |      ||  D  ) |  | |  _  | |  | |      ||  |  |
+ #    |_|  |_||    /  |  | |  |  | |  | |_|  |_||  ~  |
+ #      |  |  |    \  |  | |  |  | |  |   |  |  |___, |
+ #      |  |  |  .  \ |  | |  |  | |  |   |  |  |     |
+ #      |__|  |__|\_||____||__|__||____|  |__|  |____/
+ #
+ ###############################################################################
+ #
+ # Required:
+ #
+ #  --seqType <string>      :type of reads: ( cfa, cfq, fa, or fq )
+ #  --kmer_method <string>  :method for k-mer counting. Choose among
+ #                            jellyfish, meryl, or inchworm.  (and see
+ #                            method-specific opts below)
+ #                          All kmer counting methods are functionally equivalent, but they
+ #                          differ in speed according to: jellyfish > meryl >> inchworm
+ #
+ #  If paired reads:
+ #      --left  <string>    :left reads
+ #      --right <string>    :right reads
+ #
+ #  Or, if unpaired reads:
+ #      --single <string>   :single reads
+ #
+ ####################################
+ ##  Misc:  #########################
+ #
+ #  --SS_lib_type <string>          :Strand-specific RNA-Seq read orientation.
+ #                                   if paired: RF or FR,
+ #                                   if single: F or R.   (dUTP method = RF)
+ #                                   See web documentation.
+ #  --output <string>               :name of directory for output (will be
+ #                                   created if it doesn't already exist)
+ #                                   default( "trinity_out_dir" )
+ #  --CPU <int>                     :number of CPUs to use, default: 2
+ #  --min_contig_length <int>       :minimum assembled contig length to report
+ #                                   (def=200)
+ #  --jaccard_clip                  :option, set if you have paired reads and
+ #                                   you expect high gene density with UTR
+ #                                   overlap (use FASTQ input file format
+ #                                   for reads).
+ #                                   (note: jaccard_clip is an expensive
+ #                                   operation, so avoid using it unless
+ #                                   necessary due to finding excessive fusion
+ #                                   transcripts w/o it.)
+ #  --cite                          :get the Trinity literature citation and those of tools leveraged within.
+ #
+ ####################################################
+ # Inchworm and K-mer counting-related options: #####
+ #
+ #  --min_kmer_cov <int>           :min count for K-mers to be assembled by
+ #                                  Inchworm (default: 1)
+ # Jellyfish:
+ #  --max_memory <string>            :number of GB of system memory to use for
+ #                                  k-mer counting by jellyfish  (eg. 10G) *include the 'G' char
+ #
+ # Meryl:
+ #  --meryl_opts <string>          :pass on any meryl-specific options
+ #                                  directly to meryl. Meryl documentation:
+ #                    http://sourceforge.net/apps/mediawiki/kmer/index.php?title=Getting_Started_with_Meryl
+ #
+ ###################################
+ # Chrysalis-related options: ######
+ #
+ #  --min_glue <int>               :min number of reads needed to glue two inchworm contigs
+ #                                  together. (default: 2) 
+ #  --min_iso_ratio <float>        :min fraction of average kmer coverage between two iworm contigs
+ #                                  required for gluing.  (default: 0.05)
+ #  --glue_factor <float>          :fraction of max (iworm pair coverage) for read glue support (default: 0.05)
+ #  --max_reads_per_graph <int>    :maximum number of reads to anchor within
+ #                                  a single graph (default: 20000000)
+ #  --max_reads_per_loop <int>     :maximum number of reads to read into
+ #                                  memory at once (default: 1000000)
+ #  --min_pct_read_mapping <int>   :minimum percent of a reads kmers that must map to an
+ #                                  inchworm bundle (aka. component)  default: 0
+ #
+ #  --no_run_chrysalis             :stop Trinity after Inchworm and before
+ #                                  running Chrysalis
+ #  --no_run_quantifygraph         :stop Trinity just before running the
+ #                                  parallel QuantifyGraph computes, to
+ #                                  leverage a compute farm and massively
+ #                                  parallel execution..
+ #####################################
+ ###  Butterfly-related options:  ####
+ #
+ #  --bfly_opts <string>            :additional parameters to pass through to butterfly
+ #                                   (see butterfly documentation).
+ #  --max_number_of_paths_per_node <int>  :only most supported (N) paths are extended from node A->B,
+ #                                         mitigating combinatoric path explorations. (default: 10)
+ #  --group_pairs_distance <int>    :maximum length expected between fragment pairs (default: 500)
+ #                                   
+ #  --path_reinforcement_distance <int>   :minimum overlap of reads with growing transcript 
+ #                                        path (default: 75)
+ #
+ #  --lenient_path_extension        :require minimal read overlap to allow for path extensions. 
+ #                                   (equivalent to --path_reinforcement_distance=1)
+ #
+ #  --bflyHeapSpaceMax <string>     :java max heap space setting for butterfly
+ #                                   (default: 20G) => yields command
+ #                  'java -Xmx20G -jar Butterfly.jar ... $bfly_opts'
+ #  --bflyHeapSpaceInit <string>    :java initial hap space settings for
+ #                                   butterfly (default: 1G) => yields command
+ #                  'java -Xms1G -jar Butterfly.jar ... $bfly_opts'
+ #  --bflyGCThreads <int>           :threads for garbage collection
+ #                                   (default, not specified, so java decides)
+ #  --bflyCPU <int>                 :CPUs to use (default will be normal 
+ #                                   number of CPUs; e.g., 2)
+ #  --bflyCalculateCPU              :Calculate CPUs based on 80% of max_memory
+ #                                   divided by maxbflyHeapSpaceMax
+ #  --no_run_butterfly              :stops after the Chrysalis stage. You'll
+ #                                   need to run the Butterfly computes
+ #                                   separately, such as on a computing grid.
+ #                  Then, concatenate all the Butterfly assemblies by running:
+ #                  'find trinity_out_dir/ -name "*allProbPaths.fasta" 
+ #                   -exec cat {} + > trinity_out_dir/Trinity.fasta'
+ #
+ #################################
+ # Grid-computing options: #######
+ #
+ #  --grid_computing_module <string>  : Perl module in /Users/bhaas/sVN/trinityrnaseq/trunk/PerlLibAdaptors/ 
+ #                                      that implements 'run_on_grid()' 
+ #                                      for naively parallel cmds. (eg. 'BroadInstGridRunner')
+ #
+ #
+ ###############################################################################
+ #
+ #  *Note, a typical Trinity command might be:
+ #        Trinity.pl --seqType fq --kmer_method jellyfish --max_memory 100G --left reads_1.fq  --right reads_2.fq --CPU 6
+ #      Or, using Meryl
+ #        Trinity.pl --seqType fq --kmer_method meryl --left reads_1.fq  --right reads_2.fq --CPU 6
+ #
+ #     see: /Users/bhaas/sVN/trinityrnaseq/trunk/sample_data/test_Trinity_Assembly/
+ #          for sample data and 'runMe.sh' for example Trinity execution
+ #     For more details, visit: http://trinityrnaseq.sf.net
+ #
+ ###############################################################################
+
+
+[NOTE]
+Trinity performs best with strand-specific data, in which case sense and antisense transcripts can be resolved.  For protocols on strand-specific RNA-Seq, see: http://www.ncbi.nlm.nih.gov/pubmed/21943893[Borodina T, Adjaye J, Sultan M. A strand-specific library preparation protocol for RNA sequencing. Methods Enzymol. 2011;500:79-98. PubMed PMID: 21943893].
+
+
+If you have strand-specific data, specify the library type.  There are four library types:
+
+- Paired reads:
+    * *RF*: first read (/1) of fragment pair is sequenced as anti-sense (reverse(*R*)), and second read (/2) is in the sense strand (forward(*F*)); typical of the dUTP/UDG sequencing method.
+    * *FR*: first read (/1) of fragment pair is sequenced as sense (forward), and second read (/2) is in the antisense strand (reverse)
+
+- Unpaired (single) reads:
+    * *F*: the single read is in the sense (forward) orientation
+    * *R*: the single read is in the antisense (reverse) orientation
+
+By setting the *--SS_lib_type* parameter to one of the above, you are indicating that the reads are strand-specific.  By default, reads are treated as not strand-specific.
+
+Other important considerations:
+
+- Whether you use Fastq or Fasta formatted input files, be sure to keep the reads oriented as they are reported by Illumina, if the data are strand-specific. This is because, Trinity will properly orient the sequences according to the specified library type.  If the data are not strand-specific, now worries because the reads will be parsed in both orientations.
+
+- If you do not have strand-specific data, and you do not plan to use the <<jaccard_clip, --jaccard_clip>> option, you can combine all your reads into a single fastq or fasta file and use the '--single' option.  You can also combine paired reads and single reads, as long as the paired reads are recognized by having the same accession prefix with /1 and /2 to discriminate between paired ends.
+
+- If you have multiple paired-end library fragment sizes, set the '--group_pairs_distance' according to the larger insert library.  Pairings that exceed that distance will be treated as if they were unpaired by the Butterfly process.  Trinity's defaults are tuned to a library with an ~300 base fragment length and ~76 base reads.
+
+- by setting the '--CPU option', you are indicating:
+   * the number of threads for Inchworm to use (in most cases, Inchworm multithreading does not currently lead to performance gains. In future releases, this may change).
+   * most importantly, the number of Butterfly executions that will occur simultaneously.
+
+[[typical_usage]]
+== Typical Trinity Command Line == 
+
+A typical Trinity command for assembling non-strand-specific RNA-seq data would be like so, running the entire process on a single high-memory server (aim for ~1G RAM per ~1M ~76 base Illumina paired reads, but often *much* less memory is required):
+
+First, set your stacksize to unlimited.  The way to do this depends on your system architecture:
+
+   CentOS:  'unlimit'
+   Ubuntu:  'ulimit -s unlimited'
+
+And then verify your stacksize settings:
+
+   CentOS:  'limit'
+   Ubuntu:  'ulimit -a'
+
+If you do not do this, there is a very good possibility that Chrysalis will fail.
+
+Now, you would run Trinity:
+
+   Trinity.pl --seqType fq --left reads_1.fq  --right reads_2.fq --CPU 6
+
+Example data and sample pipeline are provided and described <<sample_data, here>>.
+
+[[trinity_output]]
+== Output of Trinity ==
+
+When Trinity completes, it will create a 'Trinity.fasta' output file in the 'trinity_out_dir/' output directory (or output directory you specify).  
+
+After obtaining Trinity transcripts, there are <<Downstream_analyses, downstream processes available to further explore these data>>.
+
+
+[[jaccard_clip]]
+== Minimizing Fusion Transcripts Derived from Gene Dense Genomes (using --jaccard_clip)  ==
+
+If your transcriptome RNA-seq data are derived from a gene-dense compact genome, such as from fungal genomes, where transcripts may often overlap in UTR regions, you can minimize fusion transcripts by leveraging the *--jaccard_clip* option if you have paired reads.  Trinity will examine the consistency of read pairings and fragment transcripts at positions that have little read-pairing support.  In expansive genomes of vertebrates and plants, this is unnecessary and not recommended.  In compact fungal genomes, it is highly recommended.  In addition to requiring paired reads, you must also have the http://bowtie-bio.sourceforge.net/index.shtml[Bowtie] short read aligner installed.  As part of this analysis, reads are aligned to the Inchworm contigs using Bowtie, and read pairings are examined across the Inchworm contigs, and contigs are clipped at positions of low pairing support.  These clipped Inchworm contigs are then fed into Chrysalis for downstream processing.  Be sure that your read names end with "/1" and "/2" for read name pairings to be properly recognized.
+
+
+[[compute_requirements]]
+== Hardware and Configuration Requirements ==
+
+The Inchworm and Chrysalis steps can be memory intensive.  A basic recommendation is to have ~1G of RAM per ~1M pairs of Illumina reads. Simpler transcriptomes (lower eukaryotes) require less memory than more complex transcriptomes such as from vertebrates.  Butterfly requires less memory and can be executed in parallel on a computing grid, but its often easier to just execute it as a single process on a large memory server, where Butterfly processes are forked off to take advantage of multiple CPUs.  The Chrysalis step can sometimes enter a deep recursion, in which case the stack memory can exceed default limits.  Before running Trinity, set the stacksize to unlimited (or as high as you can). See above and the link:trinity_faq.html[FAQ] for more details.
+
+If you are able to run the entire Trinity process on a single high-memory multi-core server, indicate the number of butterfly processes to run in parallel by the --CPU paramter (currently capped at 20, but you can force it higher).   If you decide instead to run the Butterfly commands as distributed on a compute farm, set '--no_run_butterfly' to stop the pipeline after Chrysalis completes.  A 'trinity_out_dir/chrysalis/butterfly_commands.adj' file will be generated, and you can run these commands in parallel on your computing grid (from within the trinity_out_dir, since some paths are local rather than fully qualified).  Most butterfly jobs require minimal memory (<1G), but some read-rich graphs can require up to 10G of RAM or more.  Butterfly requires that Java version 1.6 be installed.  After successfully executing all Butterfly commands, you can capture all the assembled transcripts into a single file by running the following from within the 'trinity_out_dir/' directory.:
+
+    find chrysalis/ -name "*allProbPaths.fasta" -exec cat {} \; > Trinity.fasta
+
+Our experience is that the entire process can require ~1/2 hour to one hour per million pairs of reads in the current implementation (see link:trinity_faq.html[FAQ]).  We're striving to improve upon both memory and time requirements.
+
+If you are limited to the amount of time available for executing Trinity (due to artificially imposed limits on a shared computing resource), you can aim to run Trinity in separate stages, where subsequent stages resume from the previous ones.  To do so, include the following options for each of the stages:
+
+- Stage 1: generate the kmer-catalog and run Inchworm:  '--no_run_chrysalis'
+- Stage 2: Chrysalis clustering of inchworm contigs and mapping reads: '--no_run_quantifygraph'
+- Stage 3: Chrysalis deBruijn graph construction: '--no_run_butterfly'
+- Stage 4: Run butterfly, generate final Trinity.fasta file.  (exclude '--no_' options)
+
+
+
+
+[[monitoring_trinity]]
+== Monitoring the Progress of Trinity ==
+Since Trinity can easily take several days to complete, it is useful to be able to monitor the process and to know at which stage (Inchworm, Chrysalis, Butterfly) Trinity is currently at.  There are a few general ways to do this:
+
+- by running 'top', you'll be able to see which Trinity process is running and how much memory is being consumed.
+- other downstream process will generate standard output.  Be sure to capture 'stdout' and 'stderr' when you run the Trinity.pl script.  You can 'tail -f' that output file to follow the progress of the Trinity throughout the various stages.
+
+
+[[sample_data]]
+== Running Trinity on Sample Data ==
+
+The Trinity software distribution includes sample data in the 'sample_data/test_Trinity_Assembly/' directory. Simply run the included 'runMe.sh' shell script to execute the Trinity assembly process with provided paired strand-specific Illumina data derived from mouse.  Running Trinity on the sample data requires <~2G of RAM and should run on an ordinary desktop/laptop computer.  Run as 'runMe.sh 1' to execute downstream analysis steps, including bowtie read alignment and RSEM-based abundance estimation, as described below.
+
+
+[[Downstream_analyses]]
+== Downstream Analyses ==
+
+The following downstream analyses are supported as part of Trinity:
+
+- link:analysis/align_visualize_quantify.html[Aligning the RNA-seq reads back to the Trinity transcripts for visualization in IGV and abundance estimation using RSEM].
+- link:analysis/diff_expression_analysis.html[Using EdgeR and Bioconductor for analyzing differentially expressed transcripts].
+- link:analysis/extract_proteins_from_trinity_transcripts.html[Extract likely protein-coding regions from Trinity transcripts].
+
+
+[[Computing_Grid]]
+== Adapting Trinity to a computing grid for parallel processing of naively parallel steps ==
+
+Trinity has many parallel-components, all of which can benefit from having multiple CPUs on a single server, but there are also cases such as in Chrysalis and Butterfly where tens of thousands to hundreds of thousands of commands can be executed naively in parallel, each having independent inputs and outputs.  These naively-parallel commands can be most efficiently computed in the context of a compute farm, submitting each of the commands (or batches of them) to individual nodes on the computing grid.  There are several different computing grid job management systems that are in common use, such as SGE or LSF.  To adapt Trinity to leveraging your computing grid, you would need to write an adaptor (in this case a Perl Module) that implements a method called 'run_on_grid()', accepting a list of commands to execute, and ensuring that all commands execute successfully.  This perl module would be installed in the '$TRINITYRNASEQROOT/PerlLibAdaptors/' directory, and the name of this module would be given to Trinity.pl as parameter '--grid_computing_module' .
+
+As an example, we include the 'PerlLibAdaptors/BroadInstGridRunner.pm' which we use at the Broad and demonstrates how you might implement this interface.  Here, we first run all the commands maximally in parallel on LSF.  Those commands that fail (such as due to overblowing the memory limit or time limit) are then rerun directly on the high memory server (where Trinity.pl was executed) by using ParaFly, which will allow for more memory and allow for more time to complete.  If all commands execute successfully, Trinity continues on to the next stage. If any failures are encountered, Trinity will stall, and you can resume it after you resolve whatever the problem might be.
+
+[NOTE]
+The example BroadInstGridRunner.pm uses Broad-specific LSF modules that are not included, and so it's not a fully working LSF-adapted example in the released code.  We would like to eventually include more general LSF-, SGE-, and other adaptors that could be used by the community, and we welcome contributions here as well, in the spirit of Open Source community-assisted development.
+
+
+[[advanced_guide]]
+== Want to know more? ==
+
+Visit the link:advanced_trinity_guide.html[Advanced Guide to Trinity] for more information regarding Trinity behavior, intermediate data files, and file formats.
+
+[[faq]]
+== Frequently Asked Questions ==
+
+Visit the link:trinity_faq.html[Trinity FAQ] page.
+
+[[trinity_tidbits]]
+== Trinity Tidbits ==
+
+- Trinity made the cover of the http://www.nature.com/nbt/journal/v29/n7/index.html[July 2011 NBT issue]. The Broad Institute's http://www.broadinstitute.org/blog/suite-tools-takes-flight[blog] has a story on how the Trinity project came together. Nir Friedman, one of the project PIs, has a http://nirfriedmanlab.blogspot.com/2011/07/behind-cover.html[blog entry] describing the developmental process underlying the NBT cover design.
+
+- Trinity was shown to be the leading de novo transcriptome assembly tool as part of the http://www.the-dream-project.org/challanges/dream6-alternative-splicing-challenge[DREAM6 Alt-Splicing Challenge 2011]. Results were posted http://www.the-dream-project.org/result/alternative-splicing[here].  
+
+
+[[trinity_developers]]
+== Trinity Development Group ==
+
+Trinity is currently being maintained as an open source software project, primarily by the following contributors:
+
+- Josh Bowden, CSIRO
+- Brian Couger, Oklahoma State University
+- David Eccles, Max Planck Institute for Molecular Biomedicine, Münster
+- Nir Friedman, Hebrew University (PI)
+- Manfred Grabherr, Biomedical Centre in Uppsala, Broad Institute
+- Brian Haas, Broad Institute
+- Michael Ott, CSIRO
+- Alexie Papanicolaou, CSIRO
+- Nathalie Pochet, Broad Institute
+- Aviv Regev, Broad Institute (PI)
+- Moran Yassour, Hebrew University, Broad Institute
+- Nathan Weeks, USDA-ARS
+- Rick Westerman, Purdue University
+
+
+Also, many valuable contributions come from the very active Trinity community via our mailing list (see below). 
+
+
+[[contact_us]]
+== Contact Us ==
+
+Questions, suggestions, comments, etc?
+
+Send email to https://sourceforge.net/mailarchive/forum.php?forum_name=trinityrnaseq-users[trinityrnaseq-users@lists.sf.net].
+
+Subscribe to the email list https://lists.sourceforge.net/lists/listinfo/trinityrnaseq-users[here].
+
+
+[[referencing_trinity]]
+== Referencing Trinity ==
+
+Trinity can be referenced as:
+
+- Grabherr MG, Haas BJ, Yassour M, Levin JZ, Thompson DA, Amit I, Adiconis X, Fan L, Raychowdhury R, Zeng Q, Chen Z, Mauceli E, Hacohen N, Gnirke A, Rhind N,
+di Palma F, Birren BW, Nusbaum C, Lindblad-Toh K, Friedman N, Regev A.
+Full-length transcriptome assembly from RNA-seq data without a reference genome. 
+http://www.nature.com/nbt/journal/vaop/ncurrent/abs/nbt.1883.html[Nat Biotechnol. 2011 May 15;29(7):644-52]. doi: 10.1038/nbt.1883. 
+http://www.ncbi.nlm.nih.gov/pubmed/21572440[PubMed PMID: 21572440].
+
+A full list of references including Trinity, RSEM, and additional tools leveraged by Trinity can be obtained by running 'Trinity.pl --cite'.
+

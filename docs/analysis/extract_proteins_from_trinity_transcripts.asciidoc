@@ -1,0 +1,60 @@
+= Extract Likely Coding Sequences from Trinity Transcripts =
+
+Likely coding regions can be extracted from Trinity transcripts using a set of utilities included in the Trinity software distribution.  The system works as follows:
+
+- the longest ORF is identified within the Trinity transcript (if strand-specific, this is restricted to the top strand).
+- of all the longest ORFs extracted, a subset corresponding to the very longest ones (and most likely to be genuine) are identified and used to parameterize a Markov model based on hexamers.  These likely coding sequences are randomized to provide a sequence composition corresponding to non-coding sequence.
+- all longest ORFs found are scored according to the Markov Model (log likelihood ratio based on coding/noncoding) in each of the six possible reading frames. If the putative ORF proper coding frame scores positive and is highest of the other presumed wrong reading frames, then that ORF is reported.
+
+The scoring of ORFs is largely based on that described for http://www.ncbi.nlm.nih.gov/pmc/articles/PMC310871/?tool=pubmed[GeneID], and the ORF selection process was added here.
+
+== Extracting Best ORFs ==
+
+Extracting likely coding regions from Trinity transcripts can be done using (beware, set up for strand-specific data by default, use -B for both strands):
+
+
+  TRINITY_RNASEQ_ROOT/Analysis/Coding/transcripts_to_best_scoring_ORFs.pl
+
+  with options:
+
+
+  ############################# Options ###################################################
+  #
+  # Required:
+  #
+  # -t transcripts.fasta
+  #
+  #  Optional:
+  #
+  # -m minimum protein length (default: 100)
+  #
+  # -G genetic code (default: universal, options: Euplotes, Tetrahymena, Candida, Acetabularia)
+  #
+  # -h print this option menu and quit
+  # -v verbose 
+  #
+  # -C complete ORFs only ********
+  # -B examine both strands (default: only top strand)
+  # -T top longest ORFs to train Markov Model (hexamer stats) (default: 500)
+  #
+  ##############################################################################################
+
+
+
+== Sample Data ==
+
+Sample data and example execution are provided at
+
+  TRINITY_RNASEQ_ROOT/sample_data/test_Trinity_Coding_Extraction
+
+
+Just run 'runMe.sh' to run the process.
+
+Output files include:
+
+  -rw-r--r--  1 bhaas  admin  106682 Oct 29 12:54 best_candidates.pep
+  -rw-r--r--  1 bhaas  admin  313901 Oct 29 12:54 best_candidates.cds
+  -rw-r--r--  1 bhaas  admin    5659 Oct 29 12:54 best_candidates.bed
+
+The .bed file can be loaded into IGV for viewing along with the additional Trinity assembly and alignment data.
+

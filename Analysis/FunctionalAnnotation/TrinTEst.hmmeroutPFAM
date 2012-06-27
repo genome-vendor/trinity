@@ -1,0 +1,28 @@
+#                                                               --- full sequence ---- --- best 1 domain ---- --- domain number estimation ----
+# target name        accession  query name           accession    E-value  score  bias   E-value  score  bias   exp reg clu  ov env dom rep inc description of target
+#------------------- ---------- -------------------- ---------- --------- ------ ----- --------- ------ -----   --- --- --- --- --- --- --- --- ---------------------
+Ribosomal_S11        PF00411.13 m.2                  -            1.6e-08   34.3   0.0   2.3e-08   33.9   0.0   1.2   1   0   0   1   1   1   1 Ribosomal protein S11
+DUF3311              PF11755.2  m.2                  -              0.078   12.2   0.2      0.14   11.4   0.1   1.4   1   0   0   1   1   1   0 Protein of unknown function (DUF3311)
+Nuc_sug_transp       PF04142.9  m.5                  -            5.2e-11   41.9   1.5   5.2e-11   41.9   1.0   1.7   2   0   0   2   2   2   1 Nucleotide-sugar transporter
+EamA                 PF00892.14 m.5                  -            7.1e-05   22.5   4.1   7.1e-05   22.5   2.8   3.3   2   1   1   3   3   3   1 EamA-like transporter family
+UPF0546              PF10639.3  m.5                  -                1.5    8.3  11.6     0.027   14.0   2.5   2.4   3   1   0   3   3   3   0 Uncharacterised protein family UPF0546
+TPT                  PF03151.10 m.5                  -                3.1    7.1  25.6       1.1    8.6   9.1   2.4   2   1   0   2   2   2   0 Triose-phosphate Transporter family
+DUF373               PF04123.7  m.5                  -                  8    5.0  18.9        15    4.2  11.8   2.2   1   1   0   1   1   1   0 Domain of unknown function (DUF373)
+IF-2B                PF01008.11 m.4                  -            9.2e-93  310.0   0.0   1.2e-92  309.6   0.0   1.1   1   0   0   1   1   1   1 Initiation factor 2 subunit family
+Acyltransferase      PF01553.15 m.7                  -            5.9e-11   41.7   0.0   3.3e-10   39.3   0.0   2.1   1   1   0   1   1   1   1 Acyltransferase
+Rtf2                 PF04641.6  m.11                 -            4.4e-71  238.8   1.3   5.1e-71  238.6   0.9   1.0   1   0   0   1   1   1   1 Replication termination factor 2
+zf-Nse               PF11789.2  m.11                 -            5.8e-07   28.6   0.8    0.0098   15.1   0.1   2.7   2   1   1   3   3   3   2 Zinc-finger of the MIZ type in Nse subunit
+Tap-RNA_bind         PF09162.4  m.11                 -              0.066   12.5   0.0      0.62    9.4   0.0   2.4   1   1   1   2   2   2   0 Tap, RNA-binding
+RP-C_C               PF11800.2  m.11                 -                0.9    8.9   4.4       1.2    8.5   3.0   1.2   1   0   0   1   1   1   0 Replication protein C C-terminal region
+Peptidase_M24        PF00557.1  m.6                  -            1.5e-14   53.8   0.0   1.9e-14   53.5   0.0   1.2   1   0   0   1   1   1   1 Metallopeptidase family M24
+Nab2                 PF11517.2  m.12                 -              0.035   13.9   0.1     0.056   13.2   0.1   1.3   1   0   0   1   1   1   0 Nuclear abundant poly(A) RNA-bind protein 2 (Nab2)
+TBP                  PF00352.15 m.1                  -            2.2e-68  225.3   0.1   2.5e-35  119.4   0.0   2.1   2   0   0   2   2   2   2 Transcription factor TFIID (or TATA-binding protein, TBP)
+DUF3378              PF11858.2  m.1                  -             0.0011   18.7   0.0      0.44   10.3   0.0   2.4   2   0   0   2   2   2   2 Domain of unknown function (DUF3378)
+AcetylCoA_hydro      PF02550.9  m.10                 -            7.6e-51  172.4   0.0   1.1e-50  171.8   0.0   1.3   1   0   0   1   1   1   1 Acetyl-CoA hydrolase/transferase N-terminal domain
+CoA_trans            PF01144.17 m.10                 -             0.0024   16.8   0.1     0.015   14.1   0.0   2.3   3   0   0   3   3   3   1 Coenzyme A transferase
+CitF                 PF04223.6  m.10                 -              0.078   11.3   0.0      0.18   10.1   0.0   1.5   1   0   0   1   1   1   0 Citrate lyase, alpha subunit (CitF)
+Glyco_transf_20      PF00982.15 m.3                  -           4.9e-178  592.1   0.2  6.1e-178  591.8   0.1   1.1   1   0   0   1   1   1   1 Glycosyltransferase family 20
+Trehalose_PPase      PF02358.10 m.3                  -            3.1e-85  284.5   0.0     5e-85  283.8   0.0   1.3   1   0   0   1   1   1   1 Trehalose-phosphatase
+DUF1754              PF08555.4  m.9                  -            4.6e-12   46.1  10.5   4.6e-12   46.1   7.3   1.5   1   1   0   1   1   1   1 Eukaryotic family of unknown function (DUF1754)
+VKG_Carbox           PF05090.8  m.9                  -              0.062   11.8   0.3     0.088   11.3   0.2   1.2   1   0   0   1   1   1   0 Vitamin K-dependent gamma-carboxylase
+DivIC                PF04977.9  m.9                  -                3.2    7.0   9.7       1.6    7.9   1.0   2.1   2   0   0   2   2   2   0 Septum formation initiator

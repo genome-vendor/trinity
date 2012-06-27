@@ -1,0 +1,18 @@
+                                                                     
+                                                                     
+                                                                     
+                                             
+# SignalP-4.0 euk predictions
+# name                     Cmax  pos  Ymax  pos  Smax  pos  Smean   D     ?  Dmaxcut    Networks-used
+m.2                        0.406  33  0.200   3  0.392   1  0.364   0.266 N  0.500      SignalP-TM
+m.5                        0.324  19  0.355  19  0.627   1  0.431   0.385 N  0.500      SignalP-TM
+m.4                        0.119  25  0.116  25  0.145  17  0.114   0.115 N  0.450      SignalP-noTM
+m.7                        0.366  28  0.289  28  0.433   7  0.283   0.287 N  0.500      SignalP-TM
+m.11                       0.106  12  0.100  70  0.103   6  0.093   0.096 N  0.450      SignalP-noTM
+m.6                        0.116  38  0.107  46  0.121  42  0.098   0.102 N  0.450      SignalP-noTM
+m.12                       0.127  50  0.120  50  0.154  47  0.101   0.110 N  0.450      SignalP-noTM
+m.1                        0.141  23  0.139  23  0.188   6  0.138   0.138 N  0.450      SignalP-noTM
+m.10                       0.132  55  0.113  55  0.123   5  0.099   0.106 N  0.450      SignalP-noTM
+m.3                        0.110  66  0.107  66  0.122  49  0.094   0.100 N  0.450      SignalP-noTM
+m.9                        0.113  18  0.114   2  0.127   1  0.127   0.121 N  0.450      SignalP-noTM
+m.8                        0.110  70  0.108  53  0.125  52  0.103   0.105 N  0.450      SignalP-noTM

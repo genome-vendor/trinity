@@ -1,0 +1,87 @@
+= Identifying Differentially Expressed Trinity Transcripts =
+
+Our current system for identifying differentially expressed transcripts relies on using the EdgeR Bioconductor package. We have a protocol and scripts described below for identifying differentially expressed transcripts and clustering transcripts according to expression profiles. This process is somewhat interactive, and described are automated approaches as well as manual approaches to refining gene clusters and examining their corresonding expression patterns.
+
+== Run EdgeR ==
+
+Note: This system is not yet compatible with biological replicates, but will soon be updated to leverage such data.
+
+First, join the link:align_visualize_quantify.html#RSEM[RSEM-estimated abundance values] for each of your samples by running:
+
+   TRINITY_RNASEQ_ROOT/util/RSEM_util/merge_RSEM_counts_single_table.pl  sampleA.RSEM.isoform.results sampleB.RSEM.isoform.results ... > all.counts.matrix
+
+Edit the column headers in the matrix file to your liking, since this is how the samples will be named in the downstream analysis steps.
+
+Using the all.counts.matrix file created above, perform TMM (trimmed mean of M-values) normalization and identify differentially expressed transcripts resulting from pairwise comparisons among the samples like so:
+
+  TRINITY_RNASEQ_ROOT/Analysis/DifferentialExpression/run_EdgeR.pl --matrix all.counts.matrix --transcripts Trinity.fasta --output edgeR_results_dir
+
+If you have only a single reference sample that you want the other samples to be compared to, as opposed to the all-vs-all comparisons, indicate the reference sample's column heading with: --reference ref_column_name as it exists in the all.counts.matrix file.
+
+Each pairwise comparison will generate a ${sampleA}_vs_${sampleB}.results.txt output file listing the differentially expressed transcripts, log fold-changes in expression, P-values, and FDR-corrected P-values. An edgeR dispersion factor of 0.1 (script default, but you can adjust) is used given that no biological replicates are assumed and to minimize false-positive calls. (see edgeR manual for details). In addition to the differentially expressed transcripts tablulated, an MA-plot is generated for each comparison (corresponding .eps file) as shown below. The column on the left of the MA-plot corresponds to those transcripts that have read counts in only one of the two conditions. Transcripts showing up as red dots in the MA-plot are those that are defined as differentially expressed.
+
+image:../images/diff_expr/MAplotSmearEdgeR.png[example_edgeR_MA_plot]
+
+
+The TMM and length-normalized (FPKM) expression values are provided in a file: transcript_read_counts.RAW.normalized.FPKM, which can be examined using additional methods described below.
+
+== Analyzing Differentially Expressed Transcripts ==
+
+An initial step in analyzing differential expression is to extract those transcripts that are most differentially expressed (most significant P-values and fold-changes) and to cluster the transcripts according to their patterns of differential expression across the samples. To do this, you can run the following from within the edgeR output directory::
+
+  TRINITY_RNASEQ_ROOT/Analysis/DifferentialExpression/analyze_diff_expr.pl --matrix transcript_read_counts.RAW.normalized.FPKM -P 1e-3 -C 2
+
+which will extract all genes that have P-values at most 1e-3 and are at least 2^2 fold differentially expressed. The FPKM normalized data points for these genes will be retrieved, and written to a file: diffExpr.P${Pvalue}_C{$fold_change}.matrix . These data will then be clustered using R, after first being log2-transformed, and mean-centered, generating a heatmap file: diffExpr.P${Pvalue}_C{$fold_change}.matrix.heatmap.eps, as shown below:
+
+image:../images/diff_expr/clustered_heatmap.png[heatmap]
+
+The above is mostly just a visual reference. To more seriously study and define your gene clusters, you will need to interact with the data as described below. The clusters and all required data for interrogating and defining clusters is all saved with an R-session, locally with the file 'all.RData'. This will be leveraged as described below.
+
+== Automatically defining a K-number of Gene Clusters ==
+
+Run the command below to automatically split the data set into a set of $num_clusters (similar to k-means clustering).
+
+  TRINITY_RNASEQ_ROOT/Analysis/DifferentialExpression/define_clusters_by_cutting_tree.pl -K $num_clusters
+
+
+A directory will be created called: clusters_fixed_K_${num_clusters}/ and contain the expression matrix for each of the clusters.
+
+To plot the mean-centered expression patterns for each cluster, visit that directory and run:
+
+  TRINITY_RNASEQ_ROOT/Analysis/DifferentialExpression/plot_expression_patterns.pl subcluster_*
+
+This will generate a summary image file: my_cluster_plots.pdf, as shown below:
+
+image:../images/diff_expr/expression_profiles_for_clusters.png[expression_profiles_for_clusters]
+
+
+== Manually Defining Gene Clusters ==
+
+Manually defining your clusters is the best way to organize the data to your liking. This is an interactive process. Fire up R from within your output directory, being sure it contains the 'all.RData' file, and enter the following commands:
+R
+
+  load("all.RData")
+
+  source("TRINITY_RNASEQ_ROOT/Analysis/DifferentialExpression/R/manually_define_clusters.R")
+
+  manually_define_clusters(hc_genes, centered_data)
+
+This should yield a display containing the hierarchically clustered genes, as shown below:
+
+image:../images/diff_expr/hcl_genes_tree.png[expression_hcl_tree]
+
+
+Now, manually define your clusters from left to right (order matters here, so you can decipher the results later!) by clicking on the branch vertical branch that defines the clade of interest. After clicking on the branch, it will be drawn with a red box around the selected clade, as shown below:
+
+image:../images/diff_expr/manually_selected_clusters.png[manually_selected_hcl_clusters_from_tree]
+
+Right click with the mouse (or double-touch a touchpad) to exit from cluster selection. 
+
+The clusters as selected will be written to a subdirectory manually_defined_clusters_$count_clusters, and exist in a format similar to the automated-selection of clusters described above. Likewise, you can generate plots of the expression patterns for each cluster using the 'plot_expression_patterns.pl' script.
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+posted to: bio-bwa-help@lists.sourceforge.net on 9-7-2011
+
+
+
+We (at the Broad) have a slightly modified version of BWA 0.5.7 that should properly report the multiply mapped reads for single end reads, modified by Andrey Sivachenko et al.  I was given permission to share the patch, which I've made temporarily available here:
+
+    ftp://ftp.broadinstitute.org/pub/users/bhaas/tmpStuff/bwa-0.5.7-multi.patch
+
+To use the patch (for those that are not patch-savvy), do the following:
+
+  Download the BWA version 0.5.7 from sourceforge here:
+
+  http://sourceforge.net/projects/bio-bwa/files/bwa-0.5.7.tar.bz2/download
+
+After uncompressing the archive, cd into the base directory and put the patch file there.  Then run the following to apply the patch:
+
+   patch -p1 -i bwa-0.5.7-multi.patch
+
+
+Then build the updated software normally.
+
+Usage notes from Andrey are as follows:
+
+--------------
+The only difference is in running samse step. Run as:
+
+bwa samse -n <N> -s .... (the rest is standard as per documentation)
+
+in order to generate up to N multiple alignment records for each read.
+If read has more than N alignments, subset of exactly N will be chosen at random.
+---------------

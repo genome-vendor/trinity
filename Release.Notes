@@ -1,0 +1,394 @@
+## Release 2012-05-18
+
+-Trinity.pl
+    -added --no_cleanup parameter, by default Trinity will now delete intermediate input files after outputs are generated, reducing the file-bloat issue. To retain all intermediates, use the --no_cleanup parameter.  Chrysalis and Butterfly components now have similar new parameters to which this is propagated throughout the Trinity run.
+    -added --version parameter to report the release name.
+
+
+-Chrysalis
+    -FastaToDebruijn: mirror deconvolution in DS-mode would in some cases fail to reduce the graph, retain the mirror-effect and yield fold-back / inverted-repeat -type transcripts as a result. This is now fixed.  The bug only impacted the most recent Trinity releases where FastaToDebruijn replaced the earlier Chrysalis code for de Bruijn graph construction.  (bhaas, Narayana)
+
+-ParaFly
+    -exit() if child process received SIGINT (e.g., from CTRL-C) or SIGQUIT
+     (Nathan Weeks)
+    -Disable dynamic adjustment of threads to guarantee that the program will
+     use the requested number of threads (Nathan Weeks)
+    -Use named critical regions to reduce stderr mangling (Nathan Weeks)
+
+
+
+
+## Release 2012-04-27
+
+-Trinity.pl
+    -checks for bowtie installation if being run in paired-end mode. (bhaas)
+    -uses 'ulimit -a' as a posix-compliant way of checking for resource settings (Nathan Weeks, bhaas)
+
+-alignReads.pl
+    -adds the RSEM/samtools location to the PATH setting (Nathan Weeks, bhaas)
+
+-Chrysalis
+    -propagates thread count to bowtie for generating scaffolding evidence (bhaas, Evan Ernst)
+
+-GraphFromIwormFasta
+    -set max cluster size to 100 instead of 1000 .... further improves results and reduces graph complexity
+
+-Butterfly:
+    -reintroduce simple gap-free zipper alignment for long path comparisons where each seq of the pair is longer than 10kb (prevents lock-up when inadvertently assembling plastid genomes or dealing with contigs generated from genomic contamination)
+
+
+
+## Release 2012-04-22-beta (releasing as beta because it's not fully polished yet, and want feedback from users).
+   -Trinity.pl:
+        -upgraded to the new fastool software, which is now compatible with later Casava formats, tacking on the /1 and /2 to the accessions in the fasta conversion as needed by Trinity. (bhaas, Francesco)
+   -Inchworm:
+        -set minimum contig length to report at 25 bases, same as the k-mer size. This turns out to be important to capture some subtle isoform differences where contigs branch out but don't loop back in. (bhaas)
+   -Chrysalis:
+        -in the case of paired-end data, runs bowtie to map the reads to iworm contigs, and then identifies scaffolding links. (bhaas)
+        -GraphFromFasta:
+            -uses scaffolding links from paired-ends in addition to weldmers for gluing iworm contigs into the same component. The scaffold links are treated identically to the weldmers in terms of 'glue' support required. We still don't generate scaffolded contigs including sequencing gaps, but both scaffold parts should be part of a consistent component identity. (bhaas)
+            -redesigned the iworm clustering algorithm to incrementally aggregate clusters up to a maximum cluster size (default: max of 1000 iworm contigs per cluster). This aggregation step is termed 'bubbling'. This throttled aggregation of components prevents unweildy components from being amassed and passed on to quantifygraph and butterfly, leading to improved runtime performance. (bhaas)
+   
+    -Butterfly:
+        -added '--triplet-lock' option, which is used by default in Trinity.pl. Triplet-lock refers to only allowing paths to traverse through a node if it is supported by existing read paths that link the previous and the next node.  This prevents novel path combinations from being generated at X-structures for which reads resolve the proper paths.  In the case where there are no reads that resolve the path, new paths are allowed to be generated as long as the '--path_reinforcement_distance' criteria is met. (bhaas)
+
+    -util/alignReads.pl:
+        -added '--retain_intermediate_files' as an option to retain all the intermediate sam files (previous behavior).  Now, by default, it will clean up the large intermediate files generated along the way, and primarily produce the final bam output files.
+
+    -Analysis/DifferentialExpression/R/edgeR_funcs.R
+        -included function calls based on the edgeR implementation so as to be compatibile with different edgeR versions (bhaas, Michael Reith)
+
+
+
+
+## Release 2012-03-17:
+
+   -Trinity.pl
+        -now properly checks and reports stacksize setting, and sets to unlimited stacksize on linux (bhaas)
+        -no more writing to inchworm.log or chrysalis.log, instead logging goes to stdout (bhaas)
+        -added banners for each of the major steps, both here and in Chrysalis code  (bhaas)
+        -improved the cleanliness of the output for progress monitoring (bhaas)
+        -added option '--min_pct_read_mapping' which propagates to Chrysalis -> ReadsToTranscripts (not as helpful as anticipated) (bhaas)
+        -added options for Butterfly (bhaas):
+                --max_number_of_paths_per_node <int>  :only most supported (N) paths are extended from node A->B,
+                                         mitigating combinatoric path explorations. (default: 10)
+                --lenient_path_extension        :require minimal read overlap to allow for path extensions.
+                --group_pairs_distance <int>    :maximum length expected between fragment pairs (default: 500)    /* replaces paired fragment length setting */
+                                   
+                --path_reinforcement_distance <int>   :minimum overlap of reads with growing transcript      /* overlap requirements decoupled from fragment length */
+                                                     path (default: 75)
+
+        -added options for Chrysalis: (bhaas)
+             --min_glue <int>               :min number of reads needed to glue two inchworm contigs
+                                            together. (default: 2) 
+             --min_iso_ratio <float>        :min fraction of average kmer coverage between two iworm contigs
+                                            required for gluing.  (default: 0.05)
+ 
+        -instead of scanning the file system for butterfly outputs, identifies output files directly, as now cataloged by Chrysalis, and extracted using util/print_butterfly_assemblies.pl (bhaas)
+        -added --grid_computing_module option and example modules in PerlLibAdaptors/ to allow users to integrate the parallel computing steps into their computing grid architectures. (bhaas)
+
+
+    Chrysalis:
+        -exposing Chrysalis -min_glue, -glue_factor (bhaas)
+        -chrsyalis using entropy checks, and exposing entropy values for welding and kmer (bhaas)
+        -write comp.iworm_bundle fasta files in directories (bhaas)
+        -inchworm identities trackable throughout process, and component numbers are consistent. (bhaas)
+        -chrysalis report welds (bhaas)
+        -ReadsToTranscripts: first write and appends are tracked according to first component writing, plus added verbose option (bhaas)
+        -replaced TranscriptomeGraph() with FastaToDeBruijnGraph code, relying on clustering iworm contigs keeping them in one orientation, and building a graph in a DS or SS-specific way. (bhaas)
+        -read streaming converts nucleotides to uppercase (fixes problem introduced in previous 01-25-2012-patch1 release)
+
+   -Chrysalis/analysis/GraphFromFasta.cc 
+         -Change STDOUT to STDERR for status messages (gringer)
+         -Update to use streaming mode for reads (gringer)
+         -Added OpenMP directives to parallelize a loop (nweeks)
+         -added a '-t' parameter so you can directly set the number of threads to use when debugging (bhaas)
+         -doing a simpler omp parallel  all-vs-all search among the inchworm contigs to define those with welding support (bhaas)
+         -following up the the pairwise comparisons with a transitive closure step to define the final clusters of inchworm contigs (bhaas)
+         -rather than writing 'components.out', it writes 'GraphFromIwormFasta.out', which I think is more telling. (bhaas)
+         -built a small test regime for this that runs GraphFromFasta on a 1M pair Schizo read set and corresponding inchworm contigs to define inchworm contig clusters, using 1, 5, and 10 threads, and then compares the final inchworm clusters to the expected results.   see: misc/test_GraphFromFasta (bhaas)
+         -exposing additional parameters (bhaas):  
+                -glue_factor<double> : fraction of min (iworm pair coverage) for read glue support (def=0.04)
+                -min_glue<int> : absolute min glue support required (def=2)
+                -report_welds<bool> : report the welding kmers (def=0)
+                -min_iso_ratio<double> : min ratio of (iworm pair coverage) for join (def=0.05)
+   
+
+   -Inchworm/src/ParaFly.cpp
+        -dynamic thread dispatch instead of static (bhaas)      
+   -Chrysalis/Chrysalis.cc
+        -added option --min_pct_read_mapping, which propagates to ReadsToTranscripts.cc (bhaas)
+   -Chrysalis/ReadsToTranscripts.cc
+        -added option -p, which corresponds to --min_pct_read_mapping.  Those reads that have less than this % of kmers mapping to a component will be ignored. (bhaas) /* by default turned off because it didn't seem to improve anything */
+        -the % of kmers mapping to a component for a given read is now reported in the header line of the comp\d+.raw.reads file. (bhaas)
+
+   -Jellyfish:
+        -upgraded to 1.1.4, which resolves problems on macs (bhaas)
+
+    -Analysis/DifferentialExpression/analyze_diff_expr.pl
+        -checks for the edgeR results.txt files, and dies with error if can't find them, rather than reporting zero diff expr trans. (bhaas)
+
+    -RSEM:
+        -upgraded to rsem-1.1.18 (bhaas)
+        -incorporated RSEM test regime as misc/test_RSEM (bhaas)
+        -alignReads.pl update using RSEM for 'fixing' and validating bam file (bhaas)
+
+    -fastool:
+        -incorporated Francesco Strozzi's fastool for fast fastQ to fastA conversion, replacing earlier perl script. (bhaas)
+
+    -util/merge_left_right_nameSorted_SAMs.pl:
+        -report the genome span of pairs as the insert size in the sam alignment output. (bhaas)
+
+    -util/alignReads.pl:
+        - sort buffer size is now a configurable option (default remains at 2GB) (jorvis?)
+
+
+    -Butterfly:
+        -speed improvements based on profiling results (jbowden, myassour)
+        -added --max_number_of_paths_per_node to mitigate pathological combinatorial behaviour (myassour, bhaas)
+        -resolve cycles encountered during compaction (myassour)
+        -fixed Needleman-Wunsch bug in JAligner that allows for aligning longer sequences (jbowden)
+
+    Misc:
+    -added tests: allele resolution, and other (bhaas, example data from Bastien)
+
+
+
+## Release 2012-01-25:
+
+    -quantifyGraph and butterfly success/failure file stamps. (bhaas)
+    -meryl results persist until after inchworm succeeds, and are note regenerated upon rerunning a failed inchworm job. (bhaas,nweeks)
+   -util/revcomp_fasta.pl:
+         -Faster implementation of reverse complement script, additional ambiguous bases (gringer)
+   -util/csfastX_to_defastA.pl:
+         -new accessory script. Double-encodes colorspace fasta/fastq files (gringer)
+   -util/alignReads.pl:
+        -use samtools for coordinate-sorting behavior instead of unix sort (bhaas,gringer)
+        -added bwa & tophat wrappers (bhaas)
+   -util/cmd_process_forker.pl:
+        -Generate list of completed process commands so that Java doesn't get run unnecessarily (gringer)
+   -Trinity.pl:
+         -implement reading and double-encoding of colorspace fasta/fastq files (gringer)
+         -bugfix to use $^O instead of $ENV{OSTYPE} for systems without OSTYPE defined (gringer)
+         -adjust FindBin to follow symlinks, so a symlink to Trinity.pl works as well (gringer)
+         -cleaned up usage info (bhaas)
+         -added --meryl_opts so users can specify meryl-specific memory requirements, etc. (bhaas)
+         -added bfly heap size max and init opts in place of --bflyHeapSize (bhaas)
+         -added --no_run_chrysalis to provide a stopping point post-Inchworm (bhaas)
+         -added --bflyGCThreads, needed for XSEDE's NUMA architecture (bhaas)
+         -Changes to Trinity to make preloading 1M reads the default (gringer)
+         -incorporate Jellyfish as a kmer-cataloguing option (rwesterman, bhaas)   
+         --jaccard_clip related code was almost entirely rewritten for improved memory efficiency (bhaas)
+         --further refined usage info & parameter checking (bhaas, gringer, westerman)
+   -Chrysalis/aligns/KmerAlignCore.cc 
+    Chrysalis/analysis/NonRedKmerTable.cc
+    Chrysalis/analysis/TranscriptomeGraph.cc:
+         -Change STDOUT to STDERR for status messages (gringer)
+   -Chrysalis/analysis/DNAVector.cc
+    Chrysalis/analysis/DNAVector.h
+    Chrysalis/analysis/ReadsToTranscripts.cc:
+         -Streaming mode for ReadsToTranscripts as command-line option (gringer)
+         -Make sure readcount update is atomic (nweeks)
+         -Threaded file writing, clears out files in first iteration loop (gringer)
+   -Chrysalis/analysis/Chrysalis.cc
+        -include full paths to all files in the bfly and quantifyGraph command strings (bhaas)
+   -Chrysalis/base/CommandLineParser.h:
+         -fixed spelling mistake (gringer)
+   -Makefile
+         -Changed to regenerate some automatically generated files (gringer)
+   -sample_data/test_Trinity_Assembly/cleanme.pl
+         -Added README to list of files to keep (gringer)
+   -Chrysalis/base/CommandLineParser.h
+         -Clean up indentation, make constructor a bit easier to understand, change 'Spines' -> 'Trinity' (gringer)
+   -Chrysalis:
+         - Added preliminary support for compiling with Solaris Studio 12.3: make COMPILER=sunCC (nweeks)
+         - Added support for compiling with the Intel C++ compiler (version 11.1): make COMPILER=icpc (nweeks)
+   -Inchworm:
+         - Minor portability tweaks to Support compilation with Solaris Studio 12.3: ./configure CXX=sunCC (nathanweeks)
+         - Added support for compiling with the Intel C++ compiler (version 11.1): ./configure CXX=icpc (nweeks)
+         - Fixed minor race condition in OpenMP code that affected only progress reporting (nathanweeks)
+         - can now read STDIN for reads or kmers (bhaas, gringer, ott)
+         - can read in a list of files that correspond to kmer files, and iterate through them in loading the kmer catalog into memory (a way to support jellyfish) (bhaas)
+   -util/fastQ_to_fastA.pl
+        -can now read gzipped fastq files (bhaas)
+        -can accept a list of fastq files to process (bhaas)
+        -remove cntrl-M chars, if present (bhaas)
+    -util/RSEM_util/run_RSEM.pl
+        -group's by Trinity component for the 'gene' estimate by default, now.   --group_by_component option now set as --no_group_by_component  (bhaas)
+    -Analysis/DifferentialExpression/R/edgeR_funcs.R
+        -updated for compatibility with R-2.13 (bhaas)
+    -ParaFly
+        -C++ openMP replacement to cmd_process_forker.pl (bcouger, bhaas)
+    -Butterfly
+        -added --SW option for leveraging Smith-Waterman alignments between alt path seqs,  rather than the Needleman-Wunsch(default). (bhaas)
+
+
+
+## Release 2011-11-26
+
+   -Trinity.pl:
+         -bugfix for resume support, no longer reprepping input files once the Inchworm process completes successfully.        
+         -write inchworm.log and chrysalis.log to capture stdout and stderr from these processes.
+         -inchworm and butterfly output files first written as .tmp files, then renamed once process finishes completely. (based on Ryan Thompson's fix)
+         -use BSD::Resource to auto-set the unlimited stacksize (from Ryan Thompson)
+
+   -util/alignReads.pl:  
+          -bugfix, no longer try to extract properly mapped pairs from single read data.
+          -passthrough of options to bowtie after '--' (from Rick Westerman)
+
+   -Butterfly
+          -backwards overlap distance (-O) is now set to 80% of the fragment length (-F) by default, rather than to a fixed value.
+
+   -Analysis/Coding/transcripts_to_best_scoring_ORFs.pl
+          -bugfix: updated handling of partial genes on reverse strand
+
+   -Chrysalis:
+          -QuantifyGraph uses up to 20M reads (default) to map to an individual graph, reducing memory requirements in the case of highly expressed genes (eg. rRNA when not poly-A captured)
+
+
+
+
+
+## Release 2011-10-29
+
+  -Trinity Wrapper:
+      -removed the allpaths-lg correction option. Users are recommended to use Quake or alternative error-correction strategies.
+      -butterfly now run by default.  Use the --no_run_butterfly option to keep it from happening, and to run your butterfly commands elsewhere (eg. LSF or SGE)
+      -use faster 'sed' rather than earlier perl script to prepare fasta file for using Meryl in the kmer cataloguing stage.
+      -improved resume functionality that's better compatible with symlinks
+      -huge intermediate files that are pre-inchworm and just seem to take up valuable disk space are now removed after Inchworm completes successfully.
+
+  -Butterfly:
+      -the untrustworthy ~FPKM value is now removed from the fasta headers.  Use RSEM for accurate abundance estimation (see below).
+
+  -Analysis plugins:
+       -documentation now provided for aligning reads to Trinity assemblies, visualizing the data using IGV, and estimating abundance values using RSEM.
+       -a lightly modified version of RSEM is being temporarily included with the Trinity distro to be compatible with the current trinity-based abundance estimation system (words of caution provided in the documentation).
+       -support for using EdgeR and related R-based functions are provided for studies of differential transcript expression (see documentation)
+       -utilities for extracting protein-coding regions from Trinity transcripts are provided to facilitate downstream comparative studies.
+
+
+
+
+## Release 2011-08-20
+
+  -Inchworm
+      -bhaas: bugfix wrt openMP settings (thanks Nathan Weeks!)  and should now have multithreading restored.
+      -bhaas: applied patches from Nathan Weeks for improved Solaris compatibility  
+      -bhaas: code refinements relating to DS-mode operations
+
+  -Chrysalis:
+      -bhaas: quantifyGraph commands are now written, just like butterfly cmds and cmd_process_forker.pl is used by Trinity.pl to execute them in parallel. (requested by Mack)
+      -bhaas: added progress monitoring to the ReadsToTranscripts operation, which was otherwise long-running and disconcertingly quiet.
+
+  -cmd_process_forker.pl: 
+      -bhaas: added --shuffle option so commands can be shuffled before execution
+
+  -Trinity.pl:
+      -bhaas:  runs cmd_process_forker.pl with the --shuffle option (requested by Mack)
+      -bhaas:  added upfront tests for capturing java success and failure status
+      -bhaas:  cmd_process_forker.pl executes the Chrysalis quantifyGraph commands in parallel (using --CPU number of simult. jobs).
+      -bhaas:  added more informative error messages for Inchworm and chrysalis failures that point to documentation or specific FAQ entries.
+
+
+## Release 08-15-2011-p1  (patch 1)
+
+   -meryl:  removed the C.d files from the release; still need to update the build system to remove these on 'make clean'
+
+## Release 08-15-2011   
+   -inchworm: 
+        -bhaas: incorporated Michael Ott's (ottmi) Inchworm enhancements, which greatly speed up Inchworm and reduces memory requirements in DS-mode.  ottmi is now a full-fledged Trinity developer and commits his own updates.
+        -ottmi: improved multithreading using openMP
+        -ottmi: minimizes hashtable lookups
+        -ottmi: more operations based on fast bit manipulation rather than slower string ops.
+        -ottmi: DS mode uses just as much memory as SS mode (rather than roughly 2x), since now only one of the two kmers (this, revcomp(this)) is stored in RAM.
+        -ottmi: Inchworm can read in a file containing kmers in place of sequences from which kmers need be extracted (see meryl-plugin).
+       	-ottmi: added dummy omp_*() functions to IRKE.cpp that allow for compilation without OpenMP
+		-ottmi: Optimized kmer_to_intval(), contains_non_gatc(), and decode_kmer_from_intval()
+        -ottmi: Fixed sorting issues in get_*_kmer_candidates()
+		-ottmi: get_{forward|reverse}_kmer_candidates() now return Kmer_Occurence_Pair and only those kmers that actually exist
+		-ottmi: merged all 3 prune_kmers_* function into a single function prune_some_kmers(). 
+		-ottmi: introduced new kmer_visitor class that fixes problems with revkmers in DS mode
+
+    	-bhaas: meryl software from kmer.sf.net is now incorporated into the Trinity suite. (based on ottmi testing and recommendation, plus ottmi-enhanced inchworm compatibility)
+
+    -Trinity.pl wrapper: 
+           -bhaas: meryl is used to obtain a table of k-mers, which Inchworm can directly read (requires the --meryl option, which we'll probably make a default setting in the future).
+           -bhaas: Trinity.pl: added --min_kmer_cov, which can be set to a value greater than 1, which is useful to reduce memory requirements with very large read sets (hundreds of millions of reads). It should be left at the default (1) with smaller data sets (less than 100 million reads) for maximal sensitivity.
+           -bhaas: setting max CPU to 6, as an attempt to prevent users from overloading their servers. Users that want to go higher can do so by simply modifying this script.
+		   -bhaas: jaccard-clip option now compatible with both fastq and fasta-formatted reads (previously just fastq)
+           -bhaas: more POSIX compliant use of 'find' command for concatenating butterfly sequence results (thanks Nathan Weeks!)
+
+    -Chrysalis:
+        -ottmi: patched GraphFromFasta such that it only stores one read at a time in memory. 
+        -bhaas: added placeholder files (chrysalis/*.finished) to allow for resuming a semi-completed Chrysalis run. Also  documented Chrysalis.cc to outline key sections/stages.
+        -bhaas: improved POSIX compliance (thanks Nathan Weeks!)
+
+	-util/cmd_process_forker.pl:
+		-bhaas: delete job ids from tracker after completion, should yield improved performance. (contributed by user Raj Ayyampalayam)
+        -bhaas: read all bfly commands into memory rather than processing one line at a time, to avoid problems related to file system glitches resulting in a premature EOF.
+        -bhaas: bugfix that now correctly collects zombies.
+
+
+     -Butterfly:
+        -moran: faster graph processing by additional DP/caching of intermediate path-comparison results
+        -moran,bhaas: use Jaligner to track path alignments in comparisons instead of the simpler 'zipper' alignment
+        -bhaas: revised menu to include 'same-path' critiria with options: --max_diffs_same_path and --min_per_align_same_path
+        -moran: include node sequence range in the path reporting in the fasta header
+
+## Release 7-13-2011
+   - wrapper: made the java -Xmx 1G instead of 1000M
+   - butterfly: the --compatible_path_extension is now the default behavior of butterfly (), and so removed as an option. The original behavior (slower and sometimes/rarely pathologically slow) is available as --original_path_extension
+   - butterfly: faster processing of large graphs enabled by fast node-ID lookups for graph nodes.
+   - butterfly: removed FPKM values from butterfly headers and simplified the accession string, header values are key/value pairs.
+   - wrapper: output directory is now trinity_out_dir/ by default.
+   - wrapper: Butterfly can be rerun via Trinity.pl given existing Inchworm and Chrysalis results, use --bfly_opts to try different butterfly parameters.
+   - chrysalis: update avoiding integer overflow, allowing for processing of billions of reads
+   - wrapper: unrecognized command-line options cause a fatal error, prevents accidental typos or not using enough dashes from leading to unintended runtime behavior.
+   - wrapper: default min contig length set to 200 instead of 300; easier to filter for longer ones than to go back and rerun to get the shorter ones.
+   
+
+
+
+## Release 5-19-2011
+-Butterfly updates:
+     -bugfix in recursive read mapping to graph. (minor cumulative impact, but important)
+     -exposed options:
+              --compatible_path_extension        read (pair) must be compatible and contain defined minimum extension support for path reinforcement.
+              --lenient_path_extension           only the terminal node pair(v-u) require read support
+              --all_possible_paths               all edges are traversed, regardless of long-range read path support
+              -R <int>                           minimum read support threshold. Default: 2
+              -O <int>                           path reinforcement 'backwards overlap' distance.  Default: (-F value minus 50) Not used in --lenient_path_extension mode.
+	-ascii illustrations of butterfly transcript paths and read-path pair support are included in the verbose output.
+-Trinty.pl wrapper:
+	-checks for java version 1.6
+    -defalt butterfly setting is now --compatible_path_extension, which provides nearly identical output to the original version but is many times faster and tackles tough graphs much more easily.   Also, the default butterfly --edge-thr value is back to 0.05 (the default of Butterfly.jar).
+-Inchworm and Chrysalis remain untouched.
+
+
+
+## Release 5-13-2011
+-cmd_process_forker.pl:
+   -now it reaps zombies as originally intended. Zombies were harmless as far as I could tell, but they were very annoying.  Thanks to Jason Turner for pointing this out.
+
+
+
+## Release 4-24-2011:
+-Butterfly:
+   -Original Zipper alignment is now back to the default setting.  JAligner pulled for now and will be restored in a future release after more rigorous testing.
+
+
+
+## Release 4-22-2011:
+-Butterfly:
+   -incorporated JAligner into Butterfly for comparison of sequences derived from alternate paths that end at the same node in the graph.
+   -verbose mode 5 generates .dot files for compacted graphs, and tracks progress by reporting node identifiers as it progresses through the graph.
+   -source code is better organized and includes an ant build script and example data set for testing.
+   -identifies fragment pairings based on ("/1", "/2", "\1", "\2", ":1", ":2") read name suffixes. (:1 and :2 are newly added).
+-Inchworm and Chrysalis remain unchanged
+-Trinity.pl wrapper:
+    -usage info updated with pass-through options to Butterfly (--bflyHeapSpace), and java heapspace setting can be configured (--bflyHeapSpace).
+    -the --CPU flag sets the number of threads for Inchworm to use, and if --run_butterfly is enabled, will run up to that number of simultaneous butterfly jobs.
+    -includes an option to run an error-correction procedure on the starting fastQ files, leveraging the ALLPATHS_LG software (installed separately).  The impact of running this has not been fully explored yet, so consider it experimental for now.
+
+

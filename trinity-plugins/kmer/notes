@@ -1,0 +1,24 @@
+# for meryl package
+svn co https://kmer.svn.sourceforge.net/svnroot/kmer/trunk kmer
+
+
+
+From Brian Walenz @ jcvi to the Trinity users list, 01-06-2012
+
+
+There are two ways to control memory usage in meryl: -memory and -segments.
+
+With –segments, you can get perfect load balancing, but you can’t easily control how much memory is used.  “-segments 8 –threads 4” would break the job into 8 pieces, and compute 4 of them concurrently.
+
+With –memory, you can limit how much each thread uses, but have no control over balancing.  “-memory 32768 –threads 8” would run 8 threads each at 32gb (IIRC).  The risk here is that your compute will be unbalanced, perhaps 9 pieces, computing 8 concurrently.
+
+If you’re running meryl by hand, the diagnostic output will tell pretty quickly if you’re job is too big or too small and reconfigure.  If you’re scripting, -memory seems to be the safest option.
+
+The full doc is at:
+http://sourceforge.net/apps/mediawiki/kmer/index.php?title=Getting_Started_with_Meryl
+
+b
+--
+Brian Walenz
+Senior Software Engineer
+J. Craig Venter Institute

@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.6" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock > div.content {
+  padding-left: 2.0em;
+}
+
+div.attribution {
+  text-align: right;
+}
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.verseblock div.content {
+  white-space: pre;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-content {
+  padding-left: 2.0em;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title></title>
+</head>
+<body>
+<div id="header">
+</div>
+<div class="para"><p><a href="index.html">Trinity-Home</a></p></div>
+<h1 id="_trinity_frequently_asked_questions_and_topics">Trinity: Frequently Asked Questions and Topics</h1>
+<div class="ilist"><ul>
+<li>
+<p>
+<a href="#ques_A">What computing resources are required?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_B">How long should this take?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_C">How can I run this in parallel on a computing grid?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_D">How do I identify the specific reads that were incorporated into the transcript assemblies?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_D2">How do I combine multiple libraries in a single Trinity run?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_E">Chrysalis died unexpectedly.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_F">A Butterfly process seems to run forever.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_F2">Some Butterfly commands fail.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_G">Butterfly fails with java Error: Cannot create GC thread. Out of system resources.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_H">How do I change the K-mer size?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_J">Can I combine strand-specific and non-strand-specific reads?</a>
+</p>
+</li>
+<li>
+<p>
+<a href="#ques_I">Can I combine single and paired fragment reads?</a>
+</p>
+</li>
+</ul></div>
+<h3 id="ques_A">What computing resources are required?</h3><div style="clear:left"></div>
+<div class="para"><p>Ideally, you will have access to a large-memory server, ideally having ~1G of RAM per 1M reads to be assembled (but often, much less memory may be required).  We regularly run Trinity on our Dell 256G RAM 22-core server.</p></div>
+<h3 id="ques_B">How long should this take?</h3><div style="clear:left"></div>
+<div class="para"><p>It depends on a number of factors including the number of reads to be assembled and the complexity of the transcript graphs.  The assembly from start to finish can take anywhere from ~1/2 hour to 1 hour per million reads (your mileage may vary).</p></div>
+<div class="para"><p>To troubleshoot individual graphs using Butterfly, see <a href="advanced_trinity_guide.html">Advanced Guide to Trinity</a>.</p></div>
+<h3 id="ques_C">How can I run this in parallel on a computing grid?</h3><div style="clear:left"></div>
+<div class="para"><p>The initial Inchworm and Chrysalis steps need to be run on a single server as a single process, however parts of Chrysalis and all of Butterfly can be run as naive parallel processes on a computing grid.</p></div>
+<div class="para"><p>Running Trinity.pl with the option: <em>&#8212;no_run_quantifygraph</em> will stop Trinity just before the parallel processes can be executed.  There will be two sets of files generated, each containing commands that should be executed on a computing grid.</p></div>
+<div class="para"><p>The first set of commands correspond t the Chrysalis quantifyGraph step, found at</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>trinity_out_dir/chrysalis/quantifyGraph_commands</tt></pre>
+</div></div>
+<div class="para"><p>after executing these commands on your computing grid, and ensuring that each succeeded, you can then execute the Butterfly commands found at:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>trinity_out_dir/chrysalis/butterfly_commands.adj</tt></pre>
+</div></div>
+<div class="para"><p>(be sure to use the .adj extension, since this file includes other butterfly parameters passed through the Trinity.pl wrapper).</p></div>
+<div class="para"><p>How to get each of these commands to run on your grid will depend on your computing infrastructure.  We have several ways to do this via LSF, but they're all home-grown solutions and not described here.</p></div>
+<div class="para"><p>Once all butterfly commands have been executed, you can retrieve all the resulting assembled transcripts by concatenating the individual result files together like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</tt></pre>
+</div></div>
+<h3 id="ques_D">How do I identify the specific reads that were incorporated into the transcript assemblies?</h3><div style="clear:left"></div>
+<div class="para"><p>Currently, the mappings of reads to transcripts are not reported.  To obtain this information, we recommend realigning the reads to the assembled transcripts using <a href="http://bowtie-bio.sourceforge.net/index.shtml">Bowtie</a> or <a href="http://bio-bwa.sourceforge.net/">BWA</a>.  A wrapper around Bowtie that will generate alignments for you is included in the Trinity package as:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>util/alignReads.pl</tt></pre>
+</div></div>
+<div class="para"><p>and example data and example execution of this is included at:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>sample_data/read_alignment</tt></pre>
+</div></div>
+<div class="para"><p>for paired or single read data. See the various run.sh scripts available for examples.</p></div>
+<h3 id="ques_D2">How do I combine multiple libraries in a single Trinity run?</h3><div style="clear:left"></div>
+<div class="para"><p><strong>For strand-specific data:</strong> If you have RNA-Seq data from multiple libraries and you want to run them all through Trinity in a single pass, simply combine all your left.fq files into a single left.fq file, and combine all right.fq files into a single right.fq file. Then run Trinity using these concatenated inputs.  If you have additional singletons, add them to the .fq file that they correspond to based on the sequencing method used (if they're equivalent to the left.fq entries, add them there, etc).</p></div>
+<div class="para"><p><strong>For non-strand-specifid data:</strong> You can combine all your .fq files into a single.fq file, and run Trinity with the &#8212;single parameter.  The only exception is if you want to use the &#8212;jaccard_clip option (advanced option for gene-dense genomes where transcripts tend to overlap), in which case you'll need to keep the pairs separated into left.fq and right.fq files.</p></div>
+<div class="para"><p>There is no good way to combine strand-specific data with non-strand-specific data.</p></div>
+<h3 id="ques_E">Chrysalis died unexpectedly. What do I do?</h3><div style="clear:left"></div>
+<div class="para"><p>In nearly every case examined thus far, this is because the stacksize memory grew beyond its maximal setting.  Chrysalis can sometimes recurse fairly deeply, in which case the stacksize can grow substantially.  Before running Trinity, be sure that your stacksize is set to <em>unlimited</em>.  On CentOS linux, you can check your default settings like so (it may be different on your linux distro):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>bhaas@hyacinth$ limit</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    100000 kbytes
+coredumpsize 0 kbytes
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  131072
+memorylocked 256 kbytes
+maxproc      2102272</tt></pre>
+</div></div>
+<div class="para"><p>and you would set the stacksize (and other settings) to unlimited like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>bhaas@hyacinth$ unlimit</tt></pre>
+</div></div>
+<div class="para"><p>and verify the new settings:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>bhaas@hyacinth$ limit</tt></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>cputime      unlimited
+filesize     unlimited
+datasize     unlimited
+stacksize    unlimited
+coredumpsize unlimited
+memoryuse    unlimited
+vmemoryuse   unlimited
+descriptors  131072
+memorylocked 256 kbytes
+maxproc      2102272</tt></pre>
+</div></div>
+<div class="para"><p>On Solaris, Ubuntu linux, and perhaps Mac OSX, the syntax is different, and might be:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>ulimit -s unlimited</tt></pre>
+</div></div>
+<div class="para"><p>On Ubuntu, type: <em>ulimit -a</em> to examine and verify your settings.</p></div>
+<div class="para"><p>On snow leopard, you cannot set it to unlimited for some reason (older versions you could), so try to max it out.</p></div>
+<h3 id="ques_F">Butterfly seems to run forever. What do I do?</h3><div style="clear:left"></div>
+<div class="para"><p>Occassionally (very rarely, such as one component per tens of thousands, if at all) Butterfly will encounter a complicated transcript graph and seems to take an eternity to process it.  You will notice this by running <em>top</em> and seeing a <em>java</em> process that has been running for a very long time.  For example, I'm running a dozen butterfly commands on my large server (22 cores, 256 GB RAM) and I can see various butterfly jobs running as <em>java</em> in the view:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>Tasks: 500 total,   7 running, 493 sleeping,   0 stopped,   0 zombie
+top - 09:13:33 up 131 days, 21:07,  4 users,  load average: 70.72, 53.70, 28.00Tasks: 510 total,   9 running, 501 sleeping,   0 stopped,   0 zombie
+Cpu(s): 89.1%us, 10.4%sy,  0.0%ni,  0.2%id,  0.0%wa,  0.1%hi,  0.2%si,  0.0%stMem:  264349428k total, 48345144k used, 216004284k free,   126640k buffers
+Swap:  8385920k total,   314336k used,  8071584k free, 18855720k cached
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
+ 7775 bhaas     16   0 1373m 302m 8724 S 201.2  0.1   0:04.02 java
+ 7735 bhaas     17   0 1358m 329m 8776 S 171.1  0.1   0:04.47 java
+ 7310 bhaas     17   0 1300m 359m 8804 S 140.9  0.1   0:07.84 java
+ 8194 bhaas     17   0 1294m 165m 8680 S 125.8  0.1   0:01.88 java
+ 8313 bhaas     18   0 1356m  36m 8580 S  98.1  0.0   0:00.73 java
+ 8075 bhaas     17   0 1290m  53m 8668 S  93.1  0.0   0:01.18 java
+10241 bhaas     18   0 1376m 604m 8820 S  88.0  0.2   4:31.80 java
+32424 bhaas     18   0 1306m 474m 8816 S  88.0  0.2   0:58.53 java
+ 8143 bhaas     17   0 1292m  48m 8664 S  85.5  0.0   0:01.23 java
+ 8258 bhaas     17   0 1291m  48m 8656 S  80.5  0.0   0:01.07 java
+ 1305 bhaas     17   0 1377m 509m 8820 S  78.0  0.2   0:56.11 java
+10247 bhaas     18   0 1356m 1.0g 8812 S  78.0  0.4   4:26.23 java
+...</tt></pre>
+</div></div>
+<div class="para"><p>A way to see exactly what jobs are running is to execute the following:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt> bhaas@hyacinth$ ps auxww | grep Butterfly
+bhaas     4588 50.3  0.1 1355708 435476 pts/4  Sl   09:17   0:38 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 9814096 -L 300 -F 300 -C chrysalis/RawComps.0/comp374 --edge-thr=0.16
+bhaas     5920 51.3  0.1 1353604 409604 pts/4  Sl   09:18   0:33 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10114793 -L 300 -F 300 -C chrysalis/RawComps.0/comp412 --edge-thr=0.16
+bhaas     7747 53.0  0.2 1325344 530752 pts/4  Sl   09:13   3:01 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 11032490 -L 300 -F 300 -C chrysalis/RawComps.0/comp127 --edge-thr=0.16
+bhaas    10241 56.5  0.2 1409492 625972 pts/4  Sl   09:06   7:18 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10630881 -L 300 -F 300 -C chrysalis/RawComps.0/comp2 --edge-thr=0.16
+bhaas    10247 51.9  0.4 1389204 1077640 pts/4 Sl   09:06   6:42 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10702374 -L 300 -F 300 -C chrysalis/RawComps.0/comp0 --edge-thr=0.16
+bhaas    10249 51.8  0.4 1394704 1082764 pts/4 Sl   09:06   6:41 java -Xmx1000M -jar /seq/bhaas/SVN/trinityrnaseq/Butterfly/Butterfly.jar -N 10702374 -L 300 -F 300 -C chrysalis/RawComps.0/comp1 --edge-thr=0.16</tt></pre>
+</div></div>
+<div class="para"><p>Most of the butterfly commands have been running for only a short period of time (seconds), but there are a couple that have been running for several minutes.  Most commands will take less than a few minutes to run, and some can take up to an hour.  If you see a butterfly command (java) that has been running for many hours, you can consider killing it and trying it again later with altered butterfly parameters.  There are a couple of ways to kill the process.</p></div>
+<div class="para"><p>From the command line, you can kill it like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>kill $pid</tt></pre>
+</div></div>
+<div class="para"><p>where $pid is the process ID in the first column of the <em>top</em> output or second column of the <em>ps</em> output.</p></div>
+<div class="para"><p>From within top, you can kill it by typing <em>k</em>, enter, $pid, enter.  (on linux, this is how it works; your system may vary).</p></div>
+<div class="para"><p>Once a Butterfly command has finished (or you've killed it to retry it later), the next butterfly command in the queue will take its place.</p></div>
+<div class="para"><p>If all Butterfly commands complete successfully, then the Trinity.pl wrapper script will report success and concatenate all the individual butterfly assembly outputs into a single file (Trinity.fasta).</p></div>
+<div class="para"><p>If any commands did not succeed, then the failed (or killed) commands will be reported and written to a file so that you can adjust the parameters and rerun. There are two primary reasons for why a Butterfly command might <em>run forever</em>:</p></div>
+<div class="olist"><ol>
+<li>
+<p>
+The Needleman-Wunsch global alignment seems to lock up when aligning long sequences.   Try running Butterfly in Smith-Waterman mode instead, by adding the <em>&#8212;SW</em> option.
+</p>
+</li>
+<li>
+<p>
+The transcript graph is highly complex.  By compacting the graph further, Butterfly will be able to more easily traverse it, though it may reduce the sensitivity for transcript reconstruction and alt-splice detection, so do the following sparingly.  You can add the option &#8212;edge-thr=$value to the butterfly command. By default, the $value is 0.05.  Try setting it to 0.16 or higher to substantially decrease the complexity of the graph, and improve upon the Butterfly runtime. (For more information on the <em>&#8212;edge-thr</em> parameter, see <a href="advanced_trinity_guide.html">Advanced Guide to Trinity</a>).
+</p>
+</li>
+</ol></div>
+<div class="para"><p>Once all butterfly commands have been executed, you can retrieve all the resulting assembled transcripts by concatenating the individual result files together like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</tt></pre>
+</div></div>
+<h3 id="ques_F2">Some Butterfly commands fail</h3><div style="clear:left"></div>
+<div class="para"><p>When butterfly commands fail, it's usually due to not enough heap memory being available.  This tends happen with the largest component (comp0).  Failed butterfly commands will be written to a <em>failed_cmds.txt</em> file and the Trinity process will terminate.  Try rerunning the failed commands (which should be very few, such as 1-3 out of the tens of thousands of commands) manually and resetting the heap size -Xmx value to a higher number, such as 20G.  After these failed processes complete successfully, you can combine all the Butterfly results into a single file like so:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>find trinity_out_dir/chrysalis -name "*allProbPaths.fasta" -exec cat {} + &gt; Trinity.fasta</tt></pre>
+</div></div>
+<div class="para"><p>and consider the entire run a success (albeit with a little hand-holding).</p></div>
+<h3 id="ques_G">Butterfly fails with java Error: Cannot create GC thread. Out of system resources.</h3><div style="clear:left"></div>
+<div class="para"><p>There are a couple reasons why this error message might creep up.</p></div>
+<div class="olist"><ol>
+<li>
+<p>
+<strong>all memory has been consumed on the machine</strong>.  Each butterfly process wants to reserve 20G of maximum heap space.  If there's less than 20G of free memory on the machine per butterfly (&#8212;CPU setting), then java may not be able to initialize (depends on your OS configuration).  The -Xmx20G setting indicates that 10G of heap memory should be reserved, and you can lower this to 1G for most Butterfly commands, as needed.
+</p>
+</li>
+<li>
+<p>
+<strong>NUMA architecture</strong>:  one of our users found that the java invocation required: -XX:ParallelGCThreads=&lt;Numerical Thread Count&gt;, otherwise it would try to use too many threads.
+</p>
+</li>
+</ol></div>
+<h3 id="ques_H">How do I change the K-mer size</h3><div style="clear:left"></div>
+<div class="para"><p>Although Inchworm has the capability of running independently with different k-mer sizes up to 32 (the 64-bit limit with 2-bit base encoding), Chrysalis and Butterfly are current fixed at the 25mer k-mer size.  In testing, we discovered early on that 25-mers appeared to be near-optimal across a different transcriptomes and different read abundance levels, and so fixed the value accordingly as part of the Trinity process.  Future development will aim to expose the k-mer setting as an option.</p></div>
+<h3 id="ques_J">Can I combine strand-specific and non-strand-specific reads?</h3><div style="clear:left"></div>
+<div class="para"><p>You can do so, but you wouldn't be able to benefit as from the strand-specificity, since you'll need to run Trinity in non-strand-specific mode.</p></div>
+<h3 id="ques_I">Can I combine single and paired fragment reads?</h3><div style="clear:left"></div>
+<div class="para"><p>Yes. If your data are not strand-specific, then just combine all reads into a <em>single.fq</em> file and use the &#8212;single option.  Contact the mailing list if you have a more complicated scenario.</p></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2012-03-17 17:07:51 EDT
+</div>
+</div>
+</body>
+</html>
