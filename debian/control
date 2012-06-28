@@ -1,4 +1,4 @@
-Source: trinityr2012-05-18
+Source: trinity2012-05-18
 Section: science
 Priority: optional
 Maintainer: The Genome Institute <gmt@genome.wustl.edu> 
@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 7.4), zlib1g-dev, libbz2-dev, libncurses5-dev, libn
 Standards-Version: 3.9.2
 Homepage: http://trinityrnaseq.sourceforge.net/
 
-Package: trinityr2012-05-18
+Package: trinity2012-05-18
 Architecture: all
 Depends: ${misc:Depends}
 Description: Trinity, developed at the Broad Institute and the Hebrew University of Jerusalem, 

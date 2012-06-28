@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 PRG=trinity
-VER=r2012-05-18
+VER=2012-05-18
 BIN_LIST=$$(find -maxdepth 1 -executable -type f)
 PKG=$(PRG)$(VER)
 DEB_DIR=debian/$(PKG)
@@ -16,7 +16,7 @@ BIN_WRAPPER=\
 
 override_dh_auto_install:
 	mkdir -p $(DEB_DIR)/usr/bin $(DEB_DIR)$(PKG_LIB_DIR)/bin
-	for dirname in 'Analysis' 'Butterfly' 'Chrysalis' 'Inchworm' 'PerlLib' 'PerlLibAdaptors' 'docs' 'sample_data' 'trinity-plugins' 'util'; do \
+	for dirname in 'Analysis' 'Butterfly' 'Chrysalis' 'Inchworm' 'PerlLib' 'PerlLibAdaptors' 'docs' 'trinity-plugins' 'util'; do \
 		cp -r -L $${dirname} ${DEB_DIR}${PKG_LIB_DIR}/bin; \
 		done
 	for filename in 'LICENSE' 'Makefile' 'README' 'Release.Notes' 'notes'; do \
